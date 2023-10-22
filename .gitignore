@@ -1,1 +1,6 @@
 data/*
+input/*
+output/*
+static/*
+templates/*
+server_user_id.txt
