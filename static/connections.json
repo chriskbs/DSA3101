@@ -1,0 +1,15 @@
+{
+    "gates": [
+        {"gate_id": "clb_1_gate", "connected_to": "clb_1"},
+        {"gate_id": "clb_4_gate", "connected_to": "clb_4"},
+        {"gate_id": "wbs_6_gate", "connected_to": "wbs_6"}
+    ], 
+    "levels": [
+        {"level_id": "clb_1", "connected_to": "clb_2"},
+        {"level_id": "clb_2", "connected_to": "clb_3"},
+        {"level_id": "clb_3", "connected_to": "clb_4"},
+        {"level_id": "clb_4", "connected_to": "clb_5"},
+        {"level_id": "clb_5", "connected_to": "clb_6"},
+        {"level_id": "clb_5", "connected_to": "wbs_6"}
+    ]
+}

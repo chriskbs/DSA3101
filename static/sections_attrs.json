@@ -1,0 +1,20 @@
+{
+    "movable_seat":
+        {"privacy": 0, "comfort": 0, "occupied": 0, "scenery": 0, "lighting": 10},
+    "4_man_seat":
+        {"privacy": 0, "comfort": 0, "occupied": 0, "scenery": 0, "lighting": 10},
+    "8_man_seat":
+        {"privacy": 0, "comfort": 0, "occupied": 0, "scenery": 0, "lighting": 10},
+    "window_seat":
+        {"privacy": 0, "comfort": 0, "occupied": 0, "scenery": 10, "lighting": 0},
+    "sofa":
+        {"privacy": 0, "comfort": 5, "occupied": 0, "scenery": 0, "lighting": 0},
+    "soft_seat":
+        {"privacy": 0, "comfort": 5, "occupied": 0, "scenery": 0, "lighting": 0},
+    "cubicle":
+        {"privacy": 10, "comfort": 10, "occupied": 0, "scenery": 0, "lighting": 0},
+    "discussion_cubicle":
+        {"privacy": 10, "comfort": 0, "occupied": 0, "scenery": 0, "lighting": 0},
+    "diagonal_seat":
+        {"privacy": 5, "comfort": 0, "occupied": 0, "scenery": 0, "lighting": 0}
+}
