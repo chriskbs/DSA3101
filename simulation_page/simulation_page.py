@@ -3,6 +3,8 @@ import plotly.express as px
 import pandas as pd
 import dash_bootstrap_components as dbc
 from dash import html, dcc, Input, Output, State
+from datetime import datetime, timedelta
+import random
 
 # Initializing the app 
 app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -115,6 +117,16 @@ for i in levels:
 #     'Change in Occupancy': [-5, 10, 50, -40, 10]
 # })
 
+# Sample data for four library floors
+floors = ["Floor 3", "Floor 4", "Floor 5", "Floor 6"]
+time_range = [datetime(2023, 1, 1, 9, 0), datetime(2023, 1, 1, 21, 0)]  # Change end time to 9 pm (21:00)
+time_interval = timedelta(minutes=15)
+timestamps = [time_range[0] + i * time_interval for i in range(int((time_range[1] - time_range[0]).total_seconds() / time_interval.total_seconds()))]
+
+data = {
+    floor: [random.randint(0, 100) for _ in range(len(timestamps))] for floor in floors
+}
+
 # The overall skeleton 
 app.layout = html.Div([
     dcc.Tabs(id = 'tabs', value = 'BarPlot',children = [
@@ -176,6 +188,58 @@ def toggle_popup(n1, is_open):
         return {"display":"block"},not is_open
     return {"display":"none"}, is_open
     
+
+# Time series plot for 'Occupancy Overtime'
+traces = []
+
+for floor in floors:
+    trace = go.Scatter(
+        x=timestamps,
+        y=data[floor],
+        mode='lines',
+        name=floor,
+        line_shape='spline'
+    )
+    traces.append(trace)
+
+layout = go.Layout(
+    title='Central Library TimeSeries Plot by Floor',  
+    xaxis=dict(
+        title='Time',
+        range=[time_range[0], time_range[1]],
+        rangeselector=dict(
+            buttons=list([
+                dict(count=1, label='1H', step='hour', stepmode='backward'),
+                dict(count=6, label='6H', step='hour', stepmode='backward'),
+                dict(count=1, label='1D', step='day', stepmode='backward'),
+            ])
+        ),
+        type='date',
+        showline=False,
+        hoverformat='%H:%M'  
+    ),
+    yaxis=dict(
+        title='Occupancy Rate'
+    ),
+    legend=dict(
+        orientation='h'
+    )
+)
+
+layout['xaxis']['tickformat'] = '%H:%M'
+
+
+button_style = {'backgroundColor': 'black', 'color': 'white', 'borderRadius': '15px', 'margin': '5px'}
+
+tab_oo_layout = html.Div([  
+    dcc.Graph(figure={'data': traces, 'layout': layout}),
+    html.Div([  
+        html.Button("Level 3 only", id="level-3-button", style=button_style),
+        html.Button("Level 4 only", id="level-4-button", style=button_style),
+        html.Button("Level 5 only", id="level-5-button", style=button_style),
+        html.Button("Level 6 only", id="level-6-button", style=button_style),
+    ], style={'text-align': 'center'}),
+])
 
 @app.callback(
     Output('tab-content', 'children'),
