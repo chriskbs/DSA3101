@@ -5,6 +5,7 @@ import dash_bootstrap_components as dbc
 from dash import html, dcc, Input, Output, State
 from datetime import datetime, timedelta
 import random
+import plotly.graph_objs as go
 
 # Initializing the app 
 app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -259,10 +260,7 @@ def render_content(tab):
             if i == 6:
                 to_show.append(tab_bp_layout_level6)
         return html.Div(to_show)
-    else: # referring to the 'Occupancy Overtime' tab 
-        return html.Div([
-            html.H3('Working in Progress')
-        ])
-
+    else: # referring to the 'Occupancy Overtime' tab
+        return tab_oo_layout
 if __name__ == '__main__':
     app.run_server(debug = True)
