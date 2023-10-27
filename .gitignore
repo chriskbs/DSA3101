@@ -1,0 +1,7 @@
+data/*
+*/*.csv
+*/*.xlsx
+*/*/*.csv
+*/*/*.xlsx
+img/*.png
+server_user_id.txt
