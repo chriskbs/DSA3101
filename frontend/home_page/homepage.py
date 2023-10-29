@@ -19,7 +19,8 @@ clickable_style = {
 translucent_image_style = {
     'width': '100%',
     'height': 'auto',
-    'opacity': 0.7,  
+    'opacity': 0.7, 
+} 
 
 header_style = {
     'background-color': 'white',  
