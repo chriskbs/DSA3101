@@ -120,7 +120,7 @@ for i in levels:
 
 # Sample data for four library floors
 floors = ["Floor 3", "Floor 4", "Floor 5", "Floor 6"]
-time_range = [datetime(2023, 1, 1, 9, 0), datetime(2023, 1, 1, 21, 0)]  # Change end time to 9 pm (21:00)
+time_range = [datetime(2023, 1, 1, 9, 0), datetime(2023, 1, 2, 8, 0)]
 time_interval = timedelta(minutes=15)
 timestamps = [time_range[0] + i * time_interval for i in range(int((time_range[1] - time_range[0]).total_seconds() / time_interval.total_seconds()))]
 
