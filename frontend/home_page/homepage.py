@@ -19,21 +19,23 @@ clickable_style = {
 translucent_image_style = {
     'width': '100%',
     'height': 'auto',
-    'opacity': 0.7, 
-} 
+    'opacity': 0.7,
+}
+
 
 header_style = {
-    'background-color': 'white',  
-    'color': 'navy',  
+    'background-color': '#0A2E4B',
+    'color': 'white',
     'position': 'fixed',
     'top': '0',
     'left': '0',
     'width': '100%',
-    'z-index': '1'
+    'z-index': '1',
+    'padding': '10px',  
 }
 
 button_style = {
-    'background-color': 'navy',
+    'background-color': '#0A2E4B',
     'color': 'white',
     'font-size': '16px',
     'border-radius': '10px',
@@ -53,7 +55,7 @@ app.layout = html.Div([
         style=header_style
     ),
     html.Div([
-        html.Img(src=image_url, style=translucent_image_style),  
+        html.Img(src=image_url, style=translucent_image_style),
         html.Div([
             html.Div([
                 html.Button("Check past simulations", id="check-past-simulations-button", style=button_style),
