@@ -4,9 +4,12 @@ import dash_daq as daq
 import pandas as pd
 import plotly.express as px
 import dash_bootstrap_components as dbc
+import os
 import csv
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+inputs_directory = r'inputs'
 
 simulated_period = dcc.RadioItems(
     ['Normal period', 'Exam period', 'Event day'], 
@@ -291,6 +294,10 @@ app.layout = html.Div([
                 html.Div([
                     html.Label("Give a name to this submission:"),
                     dcc.Input(id='submission-name-input', type='text', value=''),
+                    html.I("The submission name is already in use. Please choose another name.", 
+                           id='submission-name-input-error',
+                           hidden=True, 
+                           style={'text-align': 'center', 'color': 'red'}),
                     html.Button('Confirm', id='confirm-button'),
                 ])
             ],
@@ -413,9 +420,10 @@ def update_title(n_clicks, n_clicks2):
     return output
 
 @app.callback(
-    Output('submission-name-modal', 'is_open'),
+    Output('submission-name-modal', 'is_open', allow_duplicate=True),
     Input('submit-button', 'n_clicks'),
     State('submit-button', 'hidden'),
+    prevent_initial_call=True
 )
 def toggle_modal(submit_clicks, submit_button_hidden):
     if submit_button_hidden == True:
@@ -423,5 +431,36 @@ def toggle_modal(submit_clicks, submit_button_hidden):
     else:
         return True
 
+@app.callback(
+    Output('submission-name-input-error', 'hidden'),
+    Output('submission-name-modal', 'is_open', allow_duplicate=True),
+    Input('confirm-button', 'n_clicks'),
+    State('submission-name-input', 'value'),
+    prevent_initial_call=True
+)
+def confirm_submission(n_clicks, filename):
+    # checks inputs folder if any file has the same name
+    for fname in os.listdir(inputs_directory):
+        if os.path.isfile(os.path.join(inputs_directory, fname)):
+            name, extension = os.path.splitext(fname)
+            if name == filename and extension == '.csv':
+                # prompt user to change name
+                return False, True
+    # if no, save the file to inputs folder
+    filepath = os.path.join(inputs_directory, f"{filename}.csv")
+    with open(filepath, 'w', newline='') as csvfile:
+        # Create a CSV writer object
+        csv_writer = csv.writer(csvfile)
+        # Write the header row
+        header = ['Level', 'Seat Type', 'Count']
+        csv_writer.writerow(header)
+
+        # Write the seat data
+        for level, seats in data.items():
+            for seat in seats:
+                row = [level, seat['Seat Type'], seat['Count']]
+                csv_writer.writerow(row)
+    return True, False
+
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)

@@ -1,0 +1,1 @@
+This folder is to save the user input from input_page.py
