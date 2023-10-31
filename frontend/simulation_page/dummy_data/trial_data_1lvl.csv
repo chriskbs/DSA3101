@@ -1,4 +1,4 @@
-level, set, changeInOccupancy
+level, seat_type, changeInOccupancy
 3, 3, -30
 3, 4, -50
 3, 1, 10
