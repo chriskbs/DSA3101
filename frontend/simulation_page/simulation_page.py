@@ -10,7 +10,8 @@ import plotly.graph_objs as go
 # Initializing the app 
 app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-data = pd.read_csv("simulation_page/dummy_data/trial_data_1lvl.csv")
+# data = pd.read_json("frontend/simulation_page/dummy_data/simulation_overall_change.json")
+data = pd.read_csv("frontend/simulation_page/dummy_data/trial_data_1lvl.csv")
 levels = list(data['level'].unique()) # identifying the levels that users have chosen to simulate
 
 # If user only input data for one level, the graph would occupy the whole screen else just half the screen
@@ -25,8 +26,8 @@ for i in levels:
     if i == 3:
         # creating the dataframe for data of level 3
         indexes_level3 = [index for index, value in enumerate(data['level']) if value == 3]
-        df_lvl3 = data.iloc[indexes_level3].sort_values(by = ' set')
-        fig_lvl3 = px.bar(df_lvl3, x = ' set', y = ' changeInOccupancy', title = 'Level 3', color = ' changeInOccupancy', 
+        df_lvl3 = data.iloc[indexes_level3].sort_values(by = ' seat_type')
+        fig_lvl3 = px.bar(df_lvl3, x = ' seat_type', y = ' changeInOccupancy', title = 'Level 3', color = ' changeInOccupancy', 
                                   color_discrete_sequence = ['red' if value <0 else 'green' for value in df_lvl3[' changeInOccupancy']],
                                   text = df_lvl3[' changeInOccupancy'],
                                   hover_data = {' changeInOccupancy': True})
@@ -51,8 +52,8 @@ for i in levels:
 
     if i == 4:
         indexes_level4 = [index for index, value in enumerate(data['level']) if value == 4]
-        df_lvl4 = data.iloc[indexes_level4].sort_values(by = ' set')
-        fig_lvl4 = px.bar(df_lvl4, x = ' set', y = ' changeInOccupancy', title = 'Level 4', color = ' changeInOccupancy', 
+        df_lvl4 = data.iloc[indexes_level4].sort_values(by = ' seat_type')
+        fig_lvl4 = px.bar(df_lvl4, x = ' seat_type', y = ' changeInOccupancy', title = 'Level 4', color = ' changeInOccupancy', 
                                   color_discrete_sequence = ['red' if value <0 else 'green' for value in df_lvl4[' changeInOccupancy']])
 
         fig_lvl4.update_traces(marker=dict(color=['red' if value <0 else 'green' for value in df_lvl4[' changeInOccupancy']]))
@@ -72,8 +73,8 @@ for i in levels:
     
     if i == 5:
         indexes_level5 = [index for index, value in enumerate(data['level']) if value == 5]
-        df_lvl5 = data.iloc[indexes_level5].sort_values(by = ' set')
-        fig_lvl5 = px.bar(df_lvl5, x = ' set', y = ' changeInOccupancy', title = 'Level 5', color = ' changeInOccupancy', 
+        df_lvl5 = data.iloc[indexes_level5].sort_values(by = ' seat_type')
+        fig_lvl5 = px.bar(df_lvl5, x = ' seat_type', y = ' changeInOccupancy', title = 'Level 5', color = ' changeInOccupancy', 
                                   color_discrete_sequence = ['red' if value <0 else 'green' for value in df_lvl5[' changeInOccupancy']])
 
         fig_lvl5.update_traces(marker=dict(color=['red' if value <0 else 'green' for value in df_lvl5[' changeInOccupancy']]))
@@ -93,8 +94,8 @@ for i in levels:
     
     if i == 6:
         indexes_level6 = [index for index, value in enumerate(data['level']) if value == 6]
-        df_lvl6 = data.iloc[indexes_level6].sort_values(by = ' set')
-        fig_lvl6 = px.bar(df_lvl6, x = ' set', y = ' changeInOccupancy', title = 'Level 6', color = ' changeInOccupancy', 
+        df_lvl6 = data.iloc[indexes_level6].sort_values(by = ' seat_type')
+        fig_lvl6 = px.bar(df_lvl6, x = ' seat_type', y = ' changeInOccupancy', title = 'Level 6', color = ' changeInOccupancy', 
                                   color_discrete_sequence = ['red' if value <0 else 'green' for value in df_lvl6[' changeInOccupancy']])
 
         fig_lvl6.update_traces(marker=dict(color=['red' if value <0 else 'green' for value in df_lvl6[' changeInOccupancy']]))
@@ -112,11 +113,6 @@ for i in levels:
                         ]),
                         ], style = {'width':x, 'height' :y, 'display': 'inline-block'})
 
-# # Dummy inputs 
-# df = pd.DataFrame({ # dummy results 
-#     'Furniture Set': [1, 2, 3, 4, 5],
-#     'Change in Occupancy': [-5, 10, 50, -40, 10]
-# })
 
 # Sample data for four library floors
 floors = ["Floor 3", "Floor 4", "Floor 5", "Floor 6"]
@@ -130,12 +126,14 @@ data = {
 
 # The overall skeleton 
 app.layout = html.Div([
+    dbc.Button("Home", id = "button_home", n_clicks = 0, style = {'background-color': 'black'}), 
+    html.Div([
     dcc.Tabs(id = 'tabs', value = 'BarPlot',children = [
         dcc.Tab(label = 'Overall Change in Occupancy', value = 'tab-1'),
         dcc.Tab(label = 'Occupancy overtime', value = 'tab-2')
     ]),
     html.Div(id = 'tab-content')
-])
+]) ])
 
 # For 'full graph' button of level 3
 @app.callback(
@@ -262,5 +260,6 @@ def render_content(tab):
         return html.Div(to_show)
     else: # referring to the 'Occupancy Overtime' tab
         return tab_oo_layout
+    
 if __name__ == '__main__':
     app.run_server(debug = True)
