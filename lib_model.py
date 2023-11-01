@@ -2,10 +2,13 @@ import numpy as np
 import pandas as pd
 import mesa
 import networkx as nx
-from lib_agent import LibAgent
+from lib_agent import LibraryUser
 
 def compute_agents(model):
     return len(model.schedule.agents)
+
+def compute_capacities(model):
+  return {node: model.library_graph.nodes[node]['capacity'] for node in model.library_graph.nodes if 'capacity' in model.library_graph.nodes[node]}
 
 class LibModel(mesa.Model):
     """A model with some number of agents."""
@@ -18,9 +21,8 @@ class LibModel(mesa.Model):
         self.library_graph = library_graph
 
         self.datacollector = mesa.DataCollector(
-            model_reporters={"num_agents": compute_agents},
+            model_reporters={"num_agents": compute_agents, "capacities": compute_capacities},
             agent_reporters={"chosen_seat": "chosen_seat", "satisfaction": "satisfaction"},
-            collector= {"capacities": "capacity_data"}
         )
 
     def remove_agent_from_graph(self, agent_node):
@@ -98,26 +100,19 @@ class LibModel(mesa.Model):
         # Create agents, where number of agents follows Poisson distribution
         num_agents = self.entry_dist[self._curr_step]
         for i in range(np.random.poisson(num_agents)):
-            agent = LibAgent(f'{self._curr_step}-{i}', self)
+            agent = LibraryUser(f'{self._curr_step}-{i}', self)
             # print(agent.unique_id, 'created!') # for debugging
 
             optimal_seat = self.find_optimal_seat(agent, 0.7)
             if optimal_seat is not None:
                 agent.chosen_seat = optimal_seat[0]
                 agent.satisfaction = optimal_seat[1]
-                self.library_graph.nodes[optimal_seat]['capacity'] -= 1
+                self.library_graph.nodes[optimal_seat[0]]['capacity'] -= 1
                 self.schedule.add(agent) # add to schedule
         
         self.datacollector.collect(self)
-        node_capacities = {node: self.library_graph.nodes[node]['capacity'] for node in self.library_graph.nodes if 'capacity' in self.library_graph.nodes[node]}
-        self.datacollector.collect(self, {"capacity_data": node_capacities})
-        
-        
         self.schedule.step()
         self._curr_step += 1
-
-        
-        
 
 
     def run(self):
