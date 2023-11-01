@@ -105,7 +105,7 @@ class LibModel(mesa.Model):
             if optimal_seat is not None:
                 agent.chosen_seat = optimal_seat[0]
                 agent.satisfaction = optimal_seat[1]
-                self.library_graph.nodes[optimal_seat]['capacity'] -= 1
+                self.library_graph.nodes[optimal_seat[0]]['capacity'] -= 1
                 self.schedule.add(agent) # add to schedule
         
         self.datacollector.collect(self)
@@ -115,9 +115,6 @@ class LibModel(mesa.Model):
         
         self.schedule.step()
         self._curr_step += 1
-
-        
-        
 
 
     def run(self):
