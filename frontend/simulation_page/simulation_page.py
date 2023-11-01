@@ -38,17 +38,15 @@ for i in levels:
         # the graph layout given the data from level 3
         tab_bp_layout_level3 = html.Div([
             dcc.Graph(id = 'Graph_1', figure = fig_lvl3),
-            dbc.Button("Full Graph", id = "button_lvl3", n_clicks = 0, style = {'float':'right', 'background-color':'black'}),
+            dbc.Button("Full Graph", id = "button_lvl3", n_clicks = 0, style = {'float':'right', 'background-color':'lightlight blue'}),
             html.Div(id = "popup-content", children = [
                 dbc.Modal([
-                    dbc.ModalHeader("Level 3", style = {'background-color':'grey', 'font-size': '24px', 'font-weight': 'bold'}),
+                    dbc.ModalHeader("Level 3", style = {'background-color':'lightblue', 'font-size': '24px', 'font-weight': 'bold'}),
                     dbc.ModalBody([
                         dcc.Graph(id = 'Graph_1', figure = fig_lvl3, style = {'width':'100%', 'height':'100%'}),
-                        ],
-                        style = {'background-color':'white'}),
+                        ], style = {'background-color':'white'}),
                         ], id = "popup", fullscreen = True, centered = True)
-                        ]),
-                        ], style = {'width':x, 'height' :y, 'display': 'inline-block'})
+                        ]),], style = {'width':x, 'height' :y, 'display': 'inline-block'})
 
     if i == 4:
         indexes_level4 = [index for index, value in enumerate(data['level']) if value == 4]
@@ -59,10 +57,10 @@ for i in levels:
         fig_lvl4.update_traces(marker=dict(color=['red' if value <0 else 'green' for value in df_lvl4[' changeInOccupancy']]))
         tab_bp_layout_level4 = html.Div([
             dcc.Graph(id = 'Graph_2', figure = fig_lvl4),
-            dbc.Button("Full Graph", id = "button_lvl4", n_clicks = 0, style = {'float':'right', 'background-color':'black'}),
+            dbc.Button("Full Graph", id = "button_lvl4", n_clicks = 0, style = {'float':'right', 'background-color':'light blue'}),
             html.Div(id = "popup-content2", children = [
                 dbc.Modal([
-                    dbc.ModalHeader("Level 4", style = {'background-color':'grey'}),
+                    dbc.ModalHeader("Level 4", style = {'background-color':'lightblue'}),
                     dbc.ModalBody([
                         dcc.Graph(id = 'Graph_2', figure = fig_lvl4, style = {'width': '100%', 'height': '100%'}),
                         ],
@@ -80,10 +78,10 @@ for i in levels:
         fig_lvl5.update_traces(marker=dict(color=['red' if value <0 else 'green' for value in df_lvl5[' changeInOccupancy']]))
         tab_bp_layout_level5 = html.Div([
             dcc.Graph(id = 'Graph_3', figure = fig_lvl5),
-            dbc.Button("Full Graph", id = "button_lvl5", n_clicks = 0, style = {'float':'right', 'background-color':'black'}),
+            dbc.Button("Full Graph", id = "button_lvl5", n_clicks = 0, style = {'float':'right', 'background-color':'light blue'}),
             html.Div(id = "popup-content3", children = [
                 dbc.Modal([
-                    dbc.ModalHeader("Level 5", style = {'background-color':'grey'}),
+                    dbc.ModalHeader("Level 5", style = {'background-color':'lightblue'}),
                     dbc.ModalBody([
                         dcc.Graph(id = 'Graph_3', figure = fig_lvl5, style = {'width': '100%', 'height': '100%'}),
                         ],
@@ -101,10 +99,10 @@ for i in levels:
         fig_lvl6.update_traces(marker=dict(color=['red' if value <0 else 'green' for value in df_lvl6[' changeInOccupancy']]))
         tab_bp_layout_level6 = html.Div([
             dcc.Graph(id = 'Graph_4', figure = fig_lvl6),
-            dbc.Button("Full Graph", id = "button_lvl6", n_clicks = 0, style = {'float':'right', 'background-color':'black'}),
+            dbc.Button("Full Graph", id = "button_lvl6", n_clicks = 0, style = {'float':'right', 'background-color':'light blue'}),
             html.Div(id = "popup-content4", children = [
                 dbc.Modal([
-                    dbc.ModalHeader("Level 6", style = {'background-color':'grey'}),
+                    dbc.ModalHeader("Level 6", style = {'background-color':'lightblue'}),
                     dbc.ModalBody([
                         dcc.Graph(id = 'Graph_4', figure = fig_lvl6, style = {'width': '100%', 'height': '100%'}),
                         ],
@@ -126,14 +124,18 @@ data = {
 
 # The overall skeleton 
 app.layout = html.Div([
-    dbc.Button("Home", id = "button_home", n_clicks = 0, style = {'background-color': 'black'}), 
+    html.Button("Home", id = "button_home", n_clicks = 0, 
+                style = {'background-color': 'light grey', 'border-radius': '5px'}), 
+    html.Button(children = [html.Img(src = 'assets/close.png', style = {'width':'17px', 'height':'17px'})], 
+                id = "button_close", n_clicks = 0, 
+                style = {'border-radius':'5px', 'float':'right'}),
     html.Div([
-    dcc.Tabs(id = 'tabs', value = 'BarPlot',children = [
-        dcc.Tab(label = 'Overall Change in Occupancy', value = 'tab-1'),
-        dcc.Tab(label = 'Occupancy overtime', value = 'tab-2')
-    ]),
-    html.Div(id = 'tab-content')
-]) ])
+        dcc.Tabs(id = 'tabs', value = 'BarPlot',children = [
+            dcc.Tab(label = 'Overall Change in Occupancy', value = 'tab-1', style = {'padding':'10px', 'background-color':'lightblue'}),
+            dcc.Tab(label = 'Occupancy overtime', value = 'tab-2', style = {'padding':'10px', 'background-color':'lightblue'})
+            ]),
+            html.Div(id = 'tab-content')
+            ])], style = {'padding':'10px'})
 
 # For 'full graph' button of level 3
 @app.callback(
