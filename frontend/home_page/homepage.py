@@ -22,7 +22,6 @@ translucent_image_style = {
     'opacity': 0.7,
 }
 
-
 header_style = {
     'background-color': '#0A2E4B',
     'color': 'white',
@@ -31,7 +30,7 @@ header_style = {
     'left': '0',
     'width': '100%',
     'z-index': '1',
-    'padding': '10px',  
+    'padding': '10px',
 }
 
 button_style = {
@@ -46,6 +45,27 @@ button_style = {
     **bahnschrift_style,
     **clickable_style
 }
+
+chat_tab_style = {
+    'position': 'fixed',
+    'bottom': '20px',
+    'right': '20px',
+    'background-color': '#0A2E4B',  
+    'color': 'white',  
+    'font-size': '16px',  
+    'border-radius': '10px',
+    'width': '200px',
+    'display': 'flex',
+    'justify-content': 'center',
+    'align-items': 'center',
+    **bahnschrift_style,
+    **clickable_style,
+}
+
+
+chat_tab = html.Div([
+    html.P("Chat with technical team", style=chat_tab_style),
+])
 
 app.layout = html.Div([
     html.Div([
@@ -70,11 +90,14 @@ app.layout = html.Div([
                 html.P("⚙️", style={'font-size': '24px', 'background-color': 'white', 'border-radius': '50%', 'width': '40px', 'height': '40px', 'text-align': 'center', **clickable_style}),
             ], style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'center'}),
         ],
-            style={'position': 'absolute', 'top': '60%', 'left': '50%', 'transform': 'translate(-50%, -50%)', 'display': 'flex', 'flex-direction': 'column'}),
+            style={'position': 'absolute', 'top': '60%', 'left': '50%', 'transform': 'translate(-50%, -50%)', 'display': 'flex', 'flex-direction': 'column'},
+        ),
     ],
-        style={'position': 'relative', 'top': '0', 'height': '100vh', 'overflow': 'hidden', 'background-color': 'black'}),
+        style={'position': 'relative', 'top': '0', 'height': '100vh', 'overflow': 'hidden', 'background-color': 'black'},
+    ),
+    chat_tab,
 ],
-    style={'background-color': 'black', 'height': '100vh'})
+style={'background-color': 'black', 'height': '100vh'})
 
 if __name__ == '__main__':
     app.run_server(debug=True)
