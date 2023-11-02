@@ -8,7 +8,7 @@ app = dash.Dash(__name__)
 app.layout = html.Div([
     html.Link(
         rel='stylesheet',
-        href='/assets/style.css'
+        href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'
     ),
     html.Div([
         html.Div([
@@ -19,8 +19,9 @@ app.layout = html.Div([
                     {'label': 'Option 2', 'value': 'option2'},
                     {'label': 'Option 3', 'value': 'option3'}
                 ],
-                style={'width': '150px', 'margin': 'auto'},  
+                style={'width': '150px', 'margin': 'auto'},
             ),
+            html.I(className="fas fa-caret-down", style={'color': 'navy', 'margin-top': '20px'})
         ], className="feature"),
         
         html.Div([
@@ -49,36 +50,34 @@ app.layout = html.Div([
                     {'label': '4pm ~ 5pm', 'value': '4am ~ 5am'},
                     {'label': '5pm ~ 6pm', 'value': '5am ~ 6am'},
                     {'label': '6pm ~ 7pm', 'value': '6am ~ 7am'},
-                    {'label': '7pm ~ 8pm', 'value': '7am ~ 8am'},
+                    {'label': '7pm ~ 8pm', 'value': '7am ~ 8am'}
                 ],
-                style={'width': '150px', 'margin': 'auto'}, 
+                style={'width': '150px', 'margin': 'auto'},
             ),
         ], className="feature"),
         
-        html.Div("OR", style={'color': 'navy', 'font-size': '20px', 'margin-top': '20px'}),  
+        html.Div("OR", style={'color': 'navy', 'font-size': '20px', 'margin-top': '5px'}),  
+        
         html.Div([
-            html.Button("Submit CSV", className="btn", id="submit-button"),
-            dcc.Upload(
-                id='upload-data',
-                style={'display': 'none'},
-                multiple=False
-            )
+            html.Button("Submit CSV", className="btn", id="submit-button", style={'margin-top': '10px'}),
         ], className="feature"),
         
         html.Div([
-            html.H4("Run Simulation", style={'color': 'navy'}),
-            html.Button("Run Simulation", className="btn-run")
+            html.I(className="fas fa-caret-down", style={'color': 'navy', 'margin-top': '20px'}),  
+        ], className="feature"),
+        
+        html.Div([
+            html.Button("Run Simulation", className="btn-run", style={'margin-top': '20px'})  
         ], className="feature")
     ], className="feature-container")
 ], className="page", style={'text-align': 'center', 'padding-top': '50px'})
 
 @app.callback(
-    Output('upload-data', 'style'),
     Output('submit-button', 'n_clicks'),
     Input('submit-button', 'n_clicks')
 )
 def trigger_upload(n_clicks):
-    return {'display': 'block'}, None
+    return None
 
 if __name__ == '__main__':
     app.run_server(debug=True)
