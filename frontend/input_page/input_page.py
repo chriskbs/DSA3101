@@ -5,28 +5,11 @@ import pandas as pd
 import plotly.express as px
 import dash_bootstrap_components as dbc
 import os
-import csv
+import json
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 inputs_directory = r'inputs'
-
-simulated_period = dcc.RadioItems(
-    ['Normal period', 'Exam period', 'Event day'], 
-    'Normal period', 
-    id='simulated_period',
-    style={'display': 'inline-block'},
-    labelStyle={'display': 'inline-block'}
-)
-
-upload_csv = dcc.Upload(
-    id='upload_csv',
-    children=html.Button('Upload CSV File'),
-    style={
-        'display': 'inline-block'
-    },
-    multiple=False  # Allow only single file upload
-)
 
 available_levels = dcc.Checklist(
     ['Level_1', 'Level_2', 'Level_3', 'Level_4', 'Level_5', 'Level_6'],
@@ -146,10 +129,29 @@ table_balanced_seats = dash_table.DataTable(
 
 def create_item(item_name, item_image):
     image = html.Img(src=item_image, style={'width': '100%', 'height': '100%'})
-    plus_button = dbc.Button('+', color='primary', size='lg', style={'width': '100%', 'height': '100%', 'text-align': 'center'})
-    minus_button = dbc.Button('-', color='primary', size='lg', style={'width': '100%', 'height': '100%', 'text-align': 'center'})
-    count_text = dcc.Input(type='number', min=0, max=200, step=1, value = 0, style={'width': '100%', 'height': '100%', 'text-align': 'center'})
-    item_title = html.H3(item_name, style={'text-align': 'center'})
+    plus_button = dbc.Button('+', color='primary', size='lg', 
+                             style={'width': '100%', 'height': '100%', 'text-align': 'center'})
+    minus_button = dbc.Button('-', color='primary', size='lg', 
+                              style={'width': '100%', 'height': '100%', 'text-align': 'center'})
+    count_text = dcc.Input(type='number', min=0, max=200, step=1, value = 0, 
+                           style={'width': '100%', 'height': '100%', 'text-align': 'center'})
+    item_title = html.H3(item_name, style={'text-align': 'center', 'display': 'inline-block'})
+    if item_name == "discussion_cubicle":
+        seat_count = seats['d_cubicle']
+    else:
+        seat_count = seats[item_name]
+    seat_count_item = html.Div(
+        [
+            html.H3(seat_count, style={'text-align': 'center', 'display': 'inline-block'}),
+            html.Img(src="assets/seats_2.png"
+                     , style={'width': '23px', 
+                              'height': '23px', 
+                              'display': 'inline-block',
+                              'vertical-align': 'middle',
+                              'margin-bottom': '13px'})
+        ],
+        style={'text-align': 'center', 'display': 'inline-block', 'margin-left': '20px'}
+    )
     plus_button.id = f'plus-button-{item_name}'
     minus_button.id = f'minus-button-{item_name}'
     count_text.id = f'count-text-{item_name}'
@@ -157,7 +159,10 @@ def create_item(item_name, item_image):
         dbc.CardBody(
             [
                 image,
-                item_title,
+                html.Div([
+                    item_title,
+                    seat_count_item
+                ]),
                 dbc.Row(
                     [
                         dbc.Col(
@@ -180,7 +185,8 @@ def create_item(item_name, item_image):
                 ),
             ]
         ),
-        style={'width': '100%', 'height': '100%', 'text-align': 'center'}
+        style={'width': '100%', 'height': '100%', 'text-align': 'center', 
+               'margin-bottom': '10px', 'margin-top': '10px'}
     )])
 
 # Define the content for each tab
@@ -216,32 +222,19 @@ app.layout = html.Div([
         html.Div(
             [
                 html.H1(title, id="title", style={'text-align': 'center'}),
-                html.I("The model will asume that the level is closed if there is no seat selected.", style={'text-align': 'center'}),
+                html.I("The model will asume that the level is closed if there is no seat selected.", 
+                       style={'text-align': 'center'}),
             ]
         ), # div for header
         html.Div([ # div for body
             html.Li( # div for left side
                 [
-                    # html.Div([
-                    #     html.Li([
-                    #         html.Label('Simulated period'),
-                    #         html.Br(),
-                    #         simulated_period, # dcc.RadioItems
-                    #     ], style={'display': 'inline-block'}),
-                    #     html.Li([
-                    #             upload_csv # dcc.Upload
-                    #     ], style={'display': 'inline-block'})
-                    # ], style={'border': '1px solid #000', 'padding': '20px'}),
-                    # html.Br(),
-                    # html.Div([
-                    #     html.Label('Levels Available'),
-                    #     available_levels # dcc.Checklist
-                    # ], style={'border': '1px solid #000', 'padding': '20px'}),
-                    # html.Br(),
                     html.Div([
-                        html.Label('Seats selected for Level 3', id="total_seats_title", style={'padding-top': '20px', 'padding-left': '20px', 'padding-right': '20px'}),
+                        html.Label('Seats selected for Level 3', id="total_seats_title", 
+                                   style={'padding-top': '20px', 'padding-left': '20px', 'padding-right': '20px'}),
                         table_balanced_seats, # dcc.Checklist
-                        html.Label(f'Total seats: {find_total_seats(title, data, seats)}', id="total_seats", style={'padding-left': '20px', 'padding-right': '20px'}),
+                        html.B(f'Total seats: {find_total_seats(title, data, seats)}', id="total_seats", 
+                               style={'padding-left': '20px', 'padding-right': '20px'}),
                     ], style={'border': '1px solid #000'}),
                 ],
                 style={'width': '15%', 'display': 'inline-block', 'vertical-align': 'top'}
@@ -254,10 +247,12 @@ app.layout = html.Div([
                         dcc.Tab(label='More Privacy', children=more_privacy_content),
                     ]),
                 ],
-                style={'width': '85%', 'display': 'inline-block', 'text-align': 'center', 'vertical-align': 'middle', 'border': '1px solid #000', 'padding': '20px'}
+                style={'width': '85%', 'display': 'inline-block', 'text-align': 'center', 
+                       'vertical-align': 'middle', 'border': '1px solid #000', 'padding': '20px'}
             ), # div for right side
         ]),
-        html.Button('Back', id='back-button', hidden=True, style={
+        html.Button('Previous Level', id='back-button', hidden=True, style={
+            "font-size": "30px",
             "position": "fixed",
             "bottom": "50px",
             "left": "50px",
@@ -268,7 +263,8 @@ app.layout = html.Div([
             "border-radius": "5px",
             "cursor": "pointer",
         }),
-        html.Button("Next", id="next-button", hidden=False, style={
+        html.Button("Next Level", id="next-button", hidden=False, style={
+            "font-size": "30px",
             "position": "fixed",
             "bottom": "50px",
             "right": "50px",
@@ -280,6 +276,7 @@ app.layout = html.Div([
             "cursor": "pointer",
         }),
         html.Button("Submit", id="submit-button", hidden=True, style={
+            "font-size": "30px",
             "position": "fixed",
             "bottom": "50px",
             "right": "50px",
@@ -443,24 +440,50 @@ def confirm_submission(n_clicks, filename):
     for fname in os.listdir(inputs_directory):
         if os.path.isfile(os.path.join(inputs_directory, fname)):
             name, extension = os.path.splitext(fname)
-            if name == filename and extension == '.csv':
+            if name == filename and extension == '.json':
                 # prompt user to change name
                 return False, True
     # if no, save the file to inputs folder
-    filepath = os.path.join(inputs_directory, f"{filename}.csv")
-    with open(filepath, 'w', newline='') as csvfile:
-        # Create a CSV writer object
-        csv_writer = csv.writer(csvfile)
-        # Write the header row
-        header = ['Level', 'Seat Type', 'Count']
-        csv_writer.writerow(header)
+    filepath = os.path.join(inputs_directory, f"{filename}.json")
+    
+    new_data = {}
+    for level in data:
+        new_data[level] = []
+        for seat in data[level]:
+            new_data[level].append({
+                "seat_type": seat["Seat Type"],
+                "count": seat["Count"]
+            })
+    
+    output = {
+        "submission_name": filename,
+        "levels": [
+            {
+                "level": 'Level 3',
+                "sections": new_data['Level 3']
+            },
+            {
+                "level": 'Level 4',
+                "sections": new_data['Level 4']
+            },
+            {
+                "level": 'Level 5',
+                "sections": new_data['Level 5']
+            },
+            {
+                "level": 'Level 6 Central Library',
+                "sections": new_data['Level 6 Central Library']
+            },
+            {
+                "level": 'Level 6 Chinese Library',
+                "sections": new_data['Level 6 Chinese Library']
+            }
+        ]
+    }
+    with open(filepath, 'w') as f:
+        json.dump(output, f, indent=4)
 
-        # Write the seat data
-        for level, seats in data.items():
-            for seat in seats:
-                row = [level, seat['Seat Type'], seat['Count']]
-                csv_writer.writerow(row)
     return True, False
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
