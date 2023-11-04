@@ -199,25 +199,25 @@ for floor in floors:
         y=data[floor],
         mode='lines',
         name=floor,
-        line_shape='spline'
+        line_shape='spline',
+        opacity=1  # Set initial opacity to 1 for all traces
     )
     traces.append(trace)
 
 layout = go.Layout(
-    title='Central Library TimeSeries Plot by Floor',  
+    title='Central Library TimeSeries Plot by Floor',
     xaxis=dict(
         title='Time',
         range=[time_range[0], time_range[1]],
         rangeselector=dict(
             buttons=list([
-                dict(count=1, label='1H', step='hour', stepmode='backward'),
                 dict(count=6, label='6H', step='hour', stepmode='backward'),
                 dict(count=1, label='1D', step='day', stepmode='backward'),
             ])
         ),
         type='date',
         showline=False,
-        hoverformat='%H:%M'  
+        hoverformat='%H:%M'
     ),
     yaxis=dict(
         title='Occupancy Rate'
@@ -229,12 +229,11 @@ layout = go.Layout(
 
 layout['xaxis']['tickformat'] = '%H:%M'
 
-
 button_style = {'backgroundColor': 'black', 'color': 'white', 'borderRadius': '15px', 'margin': '5px'}
 
-tab_oo_layout = html.Div([  
-    dcc.Graph(figure={'data': traces, 'layout': layout}),
-    html.Div([  
+tab_oo_layout = html.Div([
+    dcc.Graph(figure={'data': traces, 'layout': layout}, id='tab-oo-layout'),
+    html.Div([
         html.Button("Level 3 only", id="level-3-button", style=button_style),
         html.Button("Level 4 only", id="level-4-button", style=button_style),
         html.Button("Level 5 only", id="level-5-button", style=button_style),
@@ -244,12 +243,16 @@ tab_oo_layout = html.Div([
 
 @app.callback(
     Output('tab-content', 'children'),
-    Input('tabs', 'value')
+    Output('tab-oo-layout', 'figure'),
+    Input('tabs', 'value'),
+    Input('level-3-button', 'n_clicks'),
+    Input('level-4-button', 'n_clicks'),
+    Input('level-5-button', 'n_clicks'),
+    Input('level-6-button', 'n_clicks')
 )
-
-def render_content(tab):
-    if tab == 'tab-1': # referring to the 'Overall Change in Occupancy' tab
-        to_show =[]
+def update_content_and_trace(tab, level3_clicks, level4_clicks, level5_clicks, level6_clicks):
+    to_show = []
+    if tab == 'tab-1':  
         for i in levels:
             if i == 3:
                 to_show.append(tab_bp_layout_level3)
@@ -259,9 +262,40 @@ def render_content(tab):
                 to_show.append(tab_bp_layout_level5)
             if i == 6:
                 to_show.append(tab_bp_layout_level6)
-        return html.Div(to_show)
-    else: # referring to the 'Occupancy Overtime' tab
-        return tab_oo_layout
+        tab_content = html.Div(to_show)
+    else:  
+        tab_content = tab_oo_layout
+
+    ctx = dash.callback_context
+    button_id = ctx.triggered[0]['prop_id'].split('.')[0]  
+
+    for trace in traces:
+        trace['opacity'] = 1
+
+    if button_id == 'level-3-button':
+        traces[0]['opacity'] = 1
+        traces[1]['opacity'] = 0.2
+        traces[2]['opacity'] = 0.2
+        traces[3]['opacity'] = 0.2
+    elif button_id == 'level-4-button':
+        traces[0]['opacity'] = 0.2
+        traces[1]['opacity'] = 1
+        traces[2]['opacity'] = 0.2
+        traces[3]['opacity'] = 0.2
+    elif button_id == 'level-5-button':
+        traces[0]['opacity'] = 0.2
+        traces[1]['opacity'] = 0.2
+        traces[2]['opacity'] = 1
+        traces[3]['opacity'] = 0.2
+    elif button_id == 'level-6-button':
+        traces[0]['opacity'] = 0.2
+        traces[1]['opacity'] = 0.2
+        traces[2]['opacity'] = 0.2
+        traces[3]['opacity'] = 1
+
+    trace_figure = {'data': traces, 'layout': layout}
+    
+    return tab_content, trace_figure
     
 if __name__ == '__main__':
     app.run_server(debug = True)
