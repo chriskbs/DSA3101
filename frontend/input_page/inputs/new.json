@@ -1,0 +1,210 @@
+{
+    "submission_name": "new",
+    "levels": [
+        {
+            "level": "Level 3",
+            "sections": [
+                {
+                    "seat_type": "movable_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "4_man_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "8_man_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "cubicle",
+                    "count": 0
+                },
+                {
+                    "seat_type": "diagonal_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "d_cubicle",
+                    "count": 0
+                },
+                {
+                    "seat_type": "sofa",
+                    "count": 0
+                },
+                {
+                    "seat_type": "soft_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "window_seat",
+                    "count": 0
+                }
+            ]
+        },
+        {
+            "level": "Level 4",
+            "sections": [
+                {
+                    "seat_type": "movable_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "4_man_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "8_man_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "cubicle",
+                    "count": 0
+                },
+                {
+                    "seat_type": "diagonal_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "d_cubicle",
+                    "count": 0
+                },
+                {
+                    "seat_type": "sofa",
+                    "count": 0
+                },
+                {
+                    "seat_type": "soft_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "window_seat",
+                    "count": 0
+                }
+            ]
+        },
+        {
+            "level": "Level 5",
+            "sections": [
+                {
+                    "seat_type": "movable_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "4_man_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "8_man_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "cubicle",
+                    "count": 0
+                },
+                {
+                    "seat_type": "diagonal_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "d_cubicle",
+                    "count": 0
+                },
+                {
+                    "seat_type": "sofa",
+                    "count": 0
+                },
+                {
+                    "seat_type": "soft_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "window_seat",
+                    "count": 0
+                }
+            ]
+        },
+        {
+            "level": "Level 6 Central Library",
+            "sections": [
+                {
+                    "seat_type": "movable_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "4_man_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "8_man_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "cubicle",
+                    "count": 0
+                },
+                {
+                    "seat_type": "diagonal_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "d_cubicle",
+                    "count": 0
+                },
+                {
+                    "seat_type": "sofa",
+                    "count": 0
+                },
+                {
+                    "seat_type": "soft_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "window_seat",
+                    "count": 0
+                }
+            ]
+        },
+        {
+            "level": "Level 6 Chinese Library",
+            "sections": [
+                {
+                    "seat_type": "movable_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "4_man_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "8_man_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "cubicle",
+                    "count": 0
+                },
+                {
+                    "seat_type": "diagonal_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "d_cubicle",
+                    "count": 0
+                },
+                {
+                    "seat_type": "sofa",
+                    "count": 0
+                },
+                {
+                    "seat_type": "soft_seat",
+                    "count": 0
+                },
+                {
+                    "seat_type": "window_seat",
+                    "count": 0
+                }
+            ]
+        }
+    ]
+}
