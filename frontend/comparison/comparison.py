@@ -2,66 +2,60 @@ import dash
 from dash import dcc, html
 import plotly.express as px
 import pandas as pd
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import csv
+import json
+import os
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-qualities = [
-    "Privacy",
-    "Crowd level",
-    "Comfort",
-    "Scenery",
-    "Lighting",
-    "Ease of finding seats",
-    ]
+colors = {"graphBackground": "#F5F5F5", "background": "#ffffff", "text": "#000000"}
 
-data_input = pd.read_csv("...") #Fill in link to data
-test = data_input["Simulation"].unique()
-options = [{"label": i, "value": i} for i in test]
+criteria = [{'label': 'Score', 'value': 'Score'},
+            {'label': 'Privacy', 'value': 'Privacy'},
+            {'label': 'Crowd Level', 'value': 'Crowd Level'},
+            {'label': 'Comfort', 'value': 'Comfort'},
+            {'label': 'Scenery', 'value': 'Scenery'},
+            {'label': 'Ease of Access', 'value': 'Ease of Access'}
+]
 
-def total_score(model):
-    return sum(model["changeInOccupancy"])
+### TO ADD TO past_simulations.py
+# dcc.Location(id="url", refresh=False),  # Location component for URL handling
+#     html.A("Go to Page 2", href="/comparison-page"),
 
 
 app.layout = html.Div([
+    dcc.Link(html.Button('Go Back to Previous Page', href='/past-simulation-page', refresh = True)), 
     html.H1("Model Score Comparison"),
-    
-    html.Div([
-        # Dropdown for selecting the first model
-        dcc.Dropdown(
-            id='model-dropdown-1',
-            options = options,
-        ),
-        # Dropdown for selecting the second model
-        dcc.Dropdown(
-            id='model-dropdown-2',
-            options = options,
-        ),
-    ], style={'display': 'flex', 'width': '50%'}),
-    
-    # Display the scores and the difference
-    html.Div(id='score-difference')
+    dcc.Location(id='/comparison-page', refresh=False),  # Location component for URL handling
+    dcc.Dropdown(
+        id='criteria-dropdown',
+        options = criteria,
+        value='Score'
+    ),
+    html.Div(id='comparison-results'),
 ])
 
-@app.callback(
-    Output('score-difference', 'children'),
-    [Input('model-dropdown-1', 'value'), Input('model-dropdown-2', 'value')]
-)
-def update_score_difference(model1, model2):
-    score1 = data_input.get(model1, 0)
-    score2 = data_input.get(model2, 0)
-    
-    if score1 > score2:
-        best_model = model1
-    elif score1 < score2:
-        best_model = model2
-    else:
-        best_model = "None (Tie)"
-    
-    difference = abs(score1 - score2)
-    
-    return f"{model1} score: {score1}, {model2} score: {score2}, Difference: {difference}, Best Model: {best_model}"
+
+@app.callback(Output('comparison-results', 'children'),
+              Input('/past-simulation-page', 'search'),
+              Input('criteria-dropdown', 'value'))
+
+def perform_comparison(n_clicks, model1, model2, criteria):
+    if n_clicks > 0 and model1 and model2 and criteria:
+        # Load JSON data for the selected models
+        with open(os.path.join(data_directory, model1 + '.json')) as f1:
+            data1 = json.load(f1)
+        with open(os.path.join(data_directory, model2 + '.json')) as f2:
+            data2 = json.load(f2)
+        # Extract the criteria scores
+        score1 = data1.get(criteria, 0)
+        score2 = data2.get(criteria, 0)
+
+        # Create a comparison result message
+        comparison_result = f"{model1} vs. {model2} based on {criteria}: {score1} vs. {score2}"
+
+        return html.H2(comparison_result)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
