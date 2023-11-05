@@ -4,9 +4,9 @@ import base64
 
 external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-app.layout = html.Div([
+rs_layout = html.Div([
     html.Div([
         html.A(html.Button("Home", className="home-btn", id="home-button"), href="/"),
     ], style={'position': 'absolute', 'top': '20px', 'left': '20px'}),  
@@ -54,18 +54,18 @@ app.layout = html.Div([
     ], className="feature"),
 
     html.Div([
-        html.Button("Run Simulation", className="btn-run", style={'margin-top': '30px', 'font-size': '20px'})
+        html.A(html.Button("Run Simulation", className="btn-run", style={'margin-top': '30px', 'font-size': '20px'}), href='/simulation_page')
     ], className="feature"),
     
     html.Div(id='output-data-upload'),
 ], className="feature-container", style={'text-align': 'center', 'padding-top': '50px'})
 
-@app.callback(Output('output-data-upload', 'children'),
-              Input('upload-data', 'contents'))
-def update_output(list_of_contents):
-    if list_of_contents is not None:
-        content = list_of_contents[0]
-        return content
+# @app.callback(Output('output-data-upload', 'children'),
+#               Input('upload-data', 'contents'))
+# def update_output(list_of_contents):
+#     if list_of_contents is not None:
+#         content = list_of_contents[0]
+#         return content
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+# if __name__ == '__main__':
+#     app.run_server(debug=True)
