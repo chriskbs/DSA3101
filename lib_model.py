@@ -13,7 +13,12 @@ def compute_agents(model):
 class LibModel(mesa.Model):
     """A model with some number of agents."""
 
-    def __init__(self, entry_df, library_graph):
+    def __init__(self, df, library_graph):
+        df['Datetime'] = pd.to_datetime(df['Datetime'])
+        entry_df = df.set_index('Datetime')
+        entry_df = entry_df[entry_df['Direction']=='Entry']['Direction'].resample('10min',  label='left').count().reset_index()
+        entry_df.columns = ['timestamp', 'entry_counts'] # how many entries every 10 mins
+
         self.schedule = mesa.time.RandomActivation(self)
         self._curr_step = 0
         self.entry_dist = entry_df.to_dict()['entry_counts']
@@ -89,9 +94,6 @@ class LibModel(mesa.Model):
 
         self.schedule.step()
         self._curr_step += 1
-
-        
-
 
     def run(self):
         for i in range(self.total_steps):
