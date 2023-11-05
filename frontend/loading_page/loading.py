@@ -17,7 +17,7 @@ app.layout = html.Div([
                 id="loading",
                 type="default",
                 fullscreen=True,
-                color="navy",  
+                color="navy",
                 children=[
                     html.Div(
                         "Please wait...",
@@ -25,7 +25,7 @@ app.layout = html.Div([
                             "color": "navy",
                             "font-size": "24px",
                             "display": "block",
-                            "margin-bottom": "20px",  
+                            "margin-bottom": "20px",
                             **bahnschrift_style,
                         },
                     ),
@@ -33,22 +33,19 @@ app.layout = html.Div([
                         type="default",
                         children=[
                             dls.Ring(color="navy"),
-                            dcc.Interval(
-                                id='timer',
-                                interval=1000,  
-                                n_intervals=0
-                            ),
                             html.Div(
-                                id='timer-output',
-                                children='Timer: 0s',
-                                style={**bahnschrift_style, "margin-top": "30px"}  
-                            )
+                                "If undirected in 5 seconds, please click here",
+                                style={
+                                    "text-align": "center",
+                                    "margin-top": "30px",  
+                                }
+                            ),
                         ],
                     ),
                 ],
                 style={
                     "position": "absolute",
-                    "top": "70%",  
+                    "top": "70%",
                     "left": "50%",
                     "transform": "translate(-50%, -50%)",
                     "text-align": "center",
@@ -64,13 +61,6 @@ app.layout = html.Div([
         },
     ),
 ])
-
-@app.callback(
-    Output('timer-output', 'children'),
-    Input('timer', 'n_intervals')
-)
-def update_timer(n):
-    return f'Timer: {n}s'
 
 if __name__ == "__main__":
     app.run_server(debug=True)

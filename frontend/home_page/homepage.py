@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
-from datetime import datetime
 
 app = dash.Dash(__name__)
 
@@ -33,27 +32,45 @@ header_style = {
     'padding': '10px',
 }
 
+header_text_style = {
+    'text-align': 'center',
+    'margin-bottom': '20px',
+    'font-size': '36px',  
+    **bahnschrift_style,
+}
+
 button_style = {
     'background-color': '#0A2E4B',
     'color': 'white',
-    'font-size': '16px',
-    'border-radius': '10px',
+    'font-size': '25px',  
+    'border-radius': '10px',  
     'width': '100%',
     'display': 'flex',
+    'margin-top': '0px',
     'justify-content': 'center',
     'align-items': 'center',
     **bahnschrift_style,
-    **clickable_style
+    **clickable_style,
+}
+
+centered_icon_style = {
+    'font-size': '28px',  
+    'background-color': 'white',
+    'border-radius': '50%',
+    'width': '40px',  
+    'height': '40px',  
+    'text-align': 'center',
+    **clickable_style,
 }
 
 chat_tab_style = {
     'position': 'fixed',
     'bottom': '20px',
     'right': '20px',
-    'background-color': '#0A2E4B',  
-    'color': 'white',  
-    'font-size': '16px',  
-    'border-radius': '10px',
+    'background-color': '#0A2E4B',
+    'color': 'white',
+    'font-size': '15px',  
+    'border-radius': '10px',  
     'width': '200px',
     'display': 'flex',
     'justify-content': 'center',
@@ -62,15 +79,13 @@ chat_tab_style = {
     **clickable_style,
 }
 
-
 chat_tab = html.Div([
     html.P("Chat with technical team", style=chat_tab_style),
 ])
 
 app.layout = html.Div([
     html.Div([
-        html.H1("Central Library Occupancy Rate Simulator", style={'text-align': 'center', 'margin-bottom': '20px', 'font-size': '30px', **bahnschrift_style}),
-        html.H2(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), style={'text-align': 'center', **bahnschrift_style}),
+        html.H1("Central Library Occupancy Rate Simulator", style={**header_text_style, 'font-size': '36px'}),
     ],
         style=header_style
     ),
@@ -79,25 +94,25 @@ app.layout = html.Div([
         html.Div([
             html.Div([
                 html.Button("Check past simulations", id="check-past-simulations-button", style=button_style),
-                html.P("📊", style={'font-size': '24px', 'background-color': 'white', 'border-radius': '50%', 'width': '40px', 'height': '40px', 'text-align': 'center', **clickable_style}),
-            ], style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'center', 'margin-bottom': '10px'}),
+                html.P("📊", style=centered_icon_style),
+            ], style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'center', 'margin-bottom': '20px'}),
             html.Div([
                 html.Button("Add new seat arrangement", id="add-seat-arrangement-button", style=button_style),
-                html.P("➕", style={'font-size': '24px', 'background-color': 'white', 'border-radius': '50%', 'width': '40px', 'height': '40px', 'text-align': 'center', **clickable_style}),
-            ], style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'center', 'margin-bottom': '10px'}),
+                html.P("➕", style=centered_icon_style),
+            ], style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'center', 'margin-bottom': '20px'}),
             html.Div([
                 html.Button("Choose seat arrangement & simulated period to run model", id="run-model-button", style=button_style),
-                html.P("⚙️", style={'font-size': '24px', 'background-color': 'white', 'border-radius': '50%', 'width': '40px', 'height': '40px', 'text-align': 'center', **clickable_style}),
+                html.P("⚙️", style=centered_icon_style),
             ], style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'center'}),
         ],
-            style={'position': 'absolute', 'top': '60%', 'left': '50%', 'transform': 'translate(-50%, -50%)', 'display': 'flex', 'flex-direction': 'column'},
+            style={'position': 'absolute', 'top': '50%', 'left': '50%', 'transform': 'translate(-50%, -50%)', 'display': 'flex', 'flex-direction': 'column'},
         ),
     ],
         style={'position': 'relative', 'top': '0', 'height': '100vh', 'overflow': 'hidden', 'background-color': 'black'},
     ),
     chat_tab,
 ],
-style={'background-color': 'black', 'height': '100vh'})
+    style={'background-color': 'black', 'height': '100vh'})
 
 if __name__ == '__main__':
     app.run_server(debug=True)
