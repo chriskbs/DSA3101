@@ -7,6 +7,8 @@ GATE_PROBS = pd.read_csv('notebooks/survey_data/dist_entry_gates.csv', index_col
 PREFS_PROBS = pd.read_csv('notebooks/survey_data/dist_factors.csv', index_col=0)
 USUAL_TIMESPENT_PROBS = pd.read_csv('notebooks/survey_data/duration_counts.csv', index_col=0)
 EXAM_TIMESPENT_PROBS = pd.read_csv('notebooks/survey_data/duration_counts_exam.csv', index_col=0)
+LEVEL_PREF_PROBS = pd.read_csv('notebooks/survey_data/dist_lvl_rate.csv', index_col=0) #read csv file first jic need to use
+IS_ALONE_PROBS = pd.read_csv('notebooks/survey_data/dist_is_alone.csv', index_col=0) #read csv file first jic need use
 
 class LibAgent(mesa.Agent):
   def __init__(self, unique_id, model, exam_period=False):
