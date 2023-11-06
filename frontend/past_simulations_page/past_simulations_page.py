@@ -7,9 +7,9 @@ import dash_bootstrap_components as dbc
 import os
 import json
 
-data_directory = '../data'
+data_directory = os.path.join(os.path.dirname(__file__), 'data') #'../data'
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+# app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 static_simulation_names = []
 
@@ -135,7 +135,7 @@ past_simulations = html.Div(
     style={'overflow': 'scroll', 'height': '90%', 'width': '100%'}
 )
 
-app.layout = html.Div([
+psp_layout = html.Div([
     delete_modal,
     html.Div([
         compare_banner,
@@ -149,67 +149,67 @@ app.layout = html.Div([
 ], 
 style={'padding': '40px', 'height': '100vh', 'width': '100vw', 'overflow': 'scroll'})
 
-# Add a callback to show the delete modal when a delete button is clicked
-@app.callback(
-    Output("delete-modal", "is_open", allow_duplicate=True),
-    Output("current-simulation-name", "data", allow_duplicate=True), 
-    [Input(f"delete-button-{simulation_name}", "n_clicks") for simulation_name in simulation_names],
-    prevent_initial_call=True
-)
-def toggle_modal(*args):
-    ctx = dash.callback_context
-    if not ctx.triggered:
-        return False, None
-    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    for simulation_name in static_simulation_names:
-        if button_id == f'delete-button-{simulation_name}':
-            return True, simulation_name
-    return False, None
+# # Add a callback to show the delete modal when a delete button is clicked
+# @app.callback(
+#     Output("delete-modal", "is_open", allow_duplicate=True),
+#     Output("current-simulation-name", "data", allow_duplicate=True), 
+#     [Input(f"delete-button-{simulation_name}", "n_clicks") for simulation_name in simulation_names],
+#     prevent_initial_call=True
+# )
+# def toggle_modal(*args):
+#     ctx = dash.callback_context
+#     if not ctx.triggered:
+#         return False, None
+#     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+#     for simulation_name in static_simulation_names:
+#         if button_id == f'delete-button-{simulation_name}':
+#             return True, simulation_name
+#     return False, None
 
-@app.callback(
-    [Output(f'row-{simulation_name}', 'hidden') for simulation_name in simulation_names],
-    Output('dropdown_left', 'options'),
-    Output('dropdown_right', 'options'),
-    Output('current-simulation-name', 'data', allow_duplicate=True),
-    Output("delete-modal", "is_open", allow_duplicate=True),
-    Input("confirm-delete-button", "n_clicks"),
-    Input("cancel-delete-button", "n_clicks"),
-    [State(f'row-{simulation_name}', 'hidden') for simulation_name in simulation_names],
-    State('current-simulation-name', 'data'),
-    prevent_initial_call=True
-)
-def delete_rows(*args):
-    ctx = dash.callback_context
-    button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    output = []
-    new_simulation_names = []
-    current_simulation_name = args[-1]
-    if button_id == "confirm-delete-button":
-        for simulation_name in static_simulation_names:
-            if os.path.exists(os.path.join(data_directory, simulation_name + '.json')):
-                if simulation_name == current_simulation_name:
-                    os.remove(os.path.join(data_directory, simulation_name + '.json'))
-                    output.append(True)
-                else:
-                    new_simulation_names.append(simulation_name)
-                    output.append(False)
-            else:
-                output.append(True)
-    if button_id == "cancel-delete-button":
-        for simulation_name in static_simulation_names:
-            if os.path.exists(os.path.join(data_directory, simulation_name + '.json')):
-                new_simulation_names.append(simulation_name)
-                output.append(False)
-            else:
-                output.append(True)
-    new_options = [{'label': name, 'value': name} for name in new_simulation_names]
-    global simulation_names
-    simulation_names = new_simulation_names.copy()
-    output.append(new_options)
-    output.append(new_options)
-    output.append(None)
-    output.append(False)
-    return output
+# @app.callback(
+#     [Output(f'row-{simulation_name}', 'hidden') for simulation_name in simulation_names],
+#     Output('dropdown_left', 'options'),
+#     Output('dropdown_right', 'options'),
+#     Output('current-simulation-name', 'data', allow_duplicate=True),
+#     Output("delete-modal", "is_open", allow_duplicate=True),
+#     Input("confirm-delete-button", "n_clicks"),
+#     Input("cancel-delete-button", "n_clicks"),
+#     [State(f'row-{simulation_name}', 'hidden') for simulation_name in simulation_names],
+#     State('current-simulation-name', 'data'),
+#     prevent_initial_call=True
+# )
+# def delete_rows(*args):
+#     ctx = dash.callback_context
+#     button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+#     output = []
+#     new_simulation_names = []
+#     current_simulation_name = args[-1]
+#     if button_id == "confirm-delete-button":
+#         for simulation_name in static_simulation_names:
+#             if os.path.exists(os.path.join(data_directory, simulation_name + '.json')):
+#                 if simulation_name == current_simulation_name:
+#                     os.remove(os.path.join(data_directory, simulation_name + '.json'))
+#                     output.append(True)
+#                 else:
+#                     new_simulation_names.append(simulation_name)
+#                     output.append(False)
+#             else:
+#                 output.append(True)
+#     if button_id == "cancel-delete-button":
+#         for simulation_name in static_simulation_names:
+#             if os.path.exists(os.path.join(data_directory, simulation_name + '.json')):
+#                 new_simulation_names.append(simulation_name)
+#                 output.append(False)
+#             else:
+#                 output.append(True)
+#     new_options = [{'label': name, 'value': name} for name in new_simulation_names]
+#     global simulation_names
+#     simulation_names = new_simulation_names.copy()
+#     output.append(new_options)
+#     output.append(new_options)
+#     output.append(None)
+#     output.append(False)
+#     return output
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+# if __name__ == '__main__':
+#     app.run_server(debug=True)
