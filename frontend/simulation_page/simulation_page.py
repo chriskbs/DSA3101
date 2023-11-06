@@ -8,7 +8,7 @@ import random
 import plotly.graph_objs as go
 
 # Initializing the app
-app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
+# app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 data = pd.read_csv("frontend/simulation_page/dummy_data/trial_data_1lvl.csv")
 levels = list(data['level'].unique())  # Identifying the levels that users have chosen to simulate
@@ -62,10 +62,12 @@ data = {
 
 button_style = {'backgroundColor': 'black', 'color': 'white', 'borderRadius': '15px', 'margin': '5px'}
 
-# The overall skeleton
-app.layout = html.Div([
-    html.Button("Home", id="button_home", n_clicks=0, style={'background-color': 'light grey', 'border-radius': '5px'}),
-    html.Button(children=[html.Img(src='assets/close.png', style={'width': '17px', 'height': '17px'})], id="button_close", n_clicks=0, style={'border-radius': '5px', 'float': 'right'}),
+# # The overall skeleton
+sp_layout = html.Div([
+    html.Button(dcc.Link("Home", href = '/', style = {'text-decoration':'none'}), 
+                id="button_home", n_clicks=0, style={'background-color': 'light grey', 'border-radius': '5px'}),
+    html.Button(dcc.Link(children=[html.Img(src='assets/close.png', style={'width': '17px', 'height': '17px'})], href = '/run_simulation', style = {'text-decoration':'none'}), 
+                id="button_close", n_clicks=0, style={'border-radius': '5px', 'float': 'right'}),
     html.Div([
         dcc.Tabs(id='tabs', value='tab-1', children=[
             dcc.Tab(label='Overall Change in Occupancy', value='tab-1', style={'padding': '10px', 'background-color': 'lightblue'}),
@@ -74,18 +76,18 @@ app.layout = html.Div([
         html.Div(id='tab-content')
     ])], style={'padding': '10px'})
 
-# Create callback functions for the "Full Graph" buttons for each level
-for level in levels:
-    @app.callback(
-        Output(f'popup-content{level}', 'style'),
-        Output(f'popup{level}', 'is_open'),
-        Input(f'button_lvl{level}', 'n_clicks'),
-        State(f'popup{level}', 'is_open')
-    )
-    def toggle_popup(n1, is_open, level=level):
-        if n1:
-            return {"display": "block"}, not is_open
-        return {"display": "none"}, is_open
+# # Create callback functions for the "Full Graph" buttons for each level
+# for level in levels:
+#     @app.callback(
+#         Output(f'popup-content{level}', 'style'),
+#         Output(f'popup{level}', 'is_open'),
+#         Input(f'button_lvl{level}', 'n_clicks'),
+#         State(f'popup{level}', 'is_open')
+#     )
+#     def toggle_popup(n1, is_open, level=level):
+#         if n1:
+#             return {"display": "block"}, not is_open
+#         return {"display": "none"}, is_open
 
 # Time series plot for 'Occupancy Overtime'
 traces = []
@@ -137,15 +139,15 @@ tab_oo_layout = html.Div([
 ])
 
 # Callback for switching between tabs and displaying the full graphs
-@app.callback(
-    Output('tab-content', 'children'),
-    Input('tabs', 'value')
-)
-def update_content(tab):
-    if tab == 'tab-1':
-        return [level_layouts[level] for level in levels]
-    else:
-        return tab_oo_layout
+# @app.callback(
+#     Output('tab-content', 'children'),
+#     Input('tabs', 'value')
+# )
+# def update_content(tab):
+#     if tab == 'tab-1':
+#         return [level_layouts[level] for level in levels]
+#     else:
+#         return tab_oo_layout
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+# if __name__ == '__main__':
+#     app.run_server(debug=True)
