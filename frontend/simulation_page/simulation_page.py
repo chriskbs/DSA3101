@@ -6,12 +6,14 @@ from dash import html, dcc, Input, Output, State
 from datetime import datetime, timedelta
 import random
 import plotly.graph_objs as go
+import os
 
 # Initializing the app
 # app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
+data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'dummy_data','trial_data_1lvl.csv'))
+levels = list(data['level'].unique()) # identifying the levels that users have chosen to simulate
 data = pd.read_csv("frontend/simulation_page/dummy_data/trial_data_1lvl.csv")
-levels = list(data['level'].unique())  # Identifying the levels that users have chosen to simulate
 
 # If the user only inputs data for one level, the graph would occupy the whole screen else just half the screen
 if len(levels) == 1:
