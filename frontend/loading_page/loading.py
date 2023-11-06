@@ -4,13 +4,13 @@ from dash import dcc
 from dash.dependencies import Input, Output
 import dash_loading_spinners as dls
 
-app = dash.Dash(__name__)
+# app = dash.Dash(__name__)
 
 bahnschrift_style = {
     'font-family': 'Bahnschrift, sans-serif'
 }
 
-app.layout = html.Div([
+load_layout = html.Div([
     html.Div(
         [
             dcc.Loading(
@@ -34,7 +34,8 @@ app.layout = html.Div([
                         children=[
                             dls.Ring(color="navy"),
                             html.Div(
-                                "If undirected in 5 seconds, please click here",
+                                dcc.Link(
+                                "If undirected in 5 seconds, please click here", href = '/simulation_page'),
                                 style={
                                     "text-align": "center",
                                     "margin-top": "30px",  
@@ -62,5 +63,5 @@ app.layout = html.Div([
     ),
 ])
 
-if __name__ == "__main__":
-    app.run_server(debug=True)
+# if __name__ == "__main__":
+#     app.run_server(debug=True)
