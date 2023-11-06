@@ -295,7 +295,7 @@ layout = html.Div([
                            id='submission-name-input-error',
                            hidden=True, 
                            style={'text-align': 'center', 'color': 'red'}),
-                    html.Button('Confirm', id='confirm-button'),
+                    html.Button(dcc.Link('Confirm', id='confirm-button', href = 'loading_page')),
                 ])
             ],
              id='submission-name-modal',
