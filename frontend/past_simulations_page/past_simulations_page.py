@@ -77,12 +77,12 @@ def create_row(simulation_name):
     simulation = html.Div(
         children=[
             html.Div([
-                html.H3(simulation_name, style={'padding': '10px', "text-decoration": "underline"}),
+                html.H3(dcc.Link(simulation_name, href = '/simulation_page'), style={'padding': '10px', "text-decoration": "underline"}), # changed 6/11 linking to simulation page 
                 simulation_scores(simulation_name),
             ], style={'display': 'inline-block', 'width': '85%', 'vertical-align': 'middle'}),
             html.Div([
                 html.Button(
-                    children=[html.Img(src='assets/view.png', style={'width': '100px', 'height': '100px'})],
+                    dcc.Link(children=[html.Img(src='assets/view.png', style={'width': '100px', 'height': '100px'})], href = '/simulation_page'), # changed 6/11 linking to simulation page 
                     id=f'view-button-{simulation_name}',
                     style={'width': '90%', 'height': '100%'}
                 )
@@ -137,6 +137,10 @@ past_simulations = html.Div(
 )
 
 psp_layout = html.Div([
+    html.Div([
+        html.A(html.Button("Home", className="home-btn", id="home-button"), href="/"),
+    ], style={'position': 'absolute', 'top': '20px', 'left': '20px'}),  # changed 6/11 included home page button 
+
     delete_modal,
     html.Div([
         compare_banner,
