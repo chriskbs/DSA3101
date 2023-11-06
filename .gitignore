@@ -5,3 +5,4 @@ data/*
 */*/*.xlsx
 img/*.png
 server_user_id.txt
+*/.DS_Store
