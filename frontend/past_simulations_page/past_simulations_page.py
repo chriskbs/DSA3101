@@ -38,7 +38,8 @@ compare_banner = html.Div([
     html.H3('VS', style={'display': 'inline-block', 'text-align': 'center', 'width': '5%', 'vertical-align': 'middle'}),
     create_dropdown("right"),
     html.Div([
-        html.Button('Compare', id='compare-button', n_clicks=0, style={'width': '100%'}),
+        html.Button(dcc.Link('Compare', href = '/compare', style = {'text-decoration':'none'}),
+                     id='compare-button', n_clicks=0, style={'width': '100%'}),
     ],
     style={'padding': '5px', 'width': '15%', 'vertical-align': 'middle', 'height': '10%', 'display': 'inline-block'})
     
