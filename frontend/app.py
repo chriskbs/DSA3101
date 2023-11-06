@@ -12,6 +12,8 @@ import home_page.home_page as hp
 import past_simulations_page.past_simulations_page as psp
 import run_simulation.runsimulation as rs 
 import simulation_page.simulation_page as sp 
+import loading_page.loading as load
+
 
 app = dash.Dash(__name__, suppress_callback_exceptions = True, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -19,7 +21,7 @@ app.layout = html.Div(children = [dcc.Location(id = "url", refresh = False),
                                        html.Div(id = "output-div")
                                        ])
 
-# callbacks for input page 
+# callbacks for input page --------------------------------------------------------------------------------------------------------------------------------------------
 @app.callback(
     [Output(f'count-text-{seat_type}', 'value', allow_duplicate=True) for seat_type in ip.seat_types_ip],
     Output('table_balanced_seats', 'data', allow_duplicate=True),
@@ -179,7 +181,7 @@ def confirm_submission(n_clicks, filename):
 
     return True, False
 
-# Callbacks for past_simulations_page
+# Callbacks for past_simulations_page ------------------------------------------------------------------------------------------------------------------------------
 # Add a callback to show the delete modal when a delete button is clicked
 @app.callback(
     Output("delete-modal", "is_open", allow_duplicate=True),
@@ -242,7 +244,7 @@ def delete_rows(*args):
     output.append(False)
     return output
 
-# callback for run_simulation page
+# callback for run_simulation page----------------------------------------------------------------------------------------------------------------------------
 @app.callback(Output('output-data-upload', 'children'),
               Input('upload-data', 'contents'))
 def update_output(list_of_contents):
@@ -250,116 +252,34 @@ def update_output(list_of_contents):
         content = list_of_contents[0]
         return content
 
-# Callbacks for simulation_page.py -------------------------------------------------------------------------------------(not working yet)
-# For 'full graph' button of level 3
-@app.callback(
-        Output('popup-content', 'style'),
-        Output('popup', 'is_open'),
-        Input('button_lvl3','n_clicks'),
-        State('popup', 'is_open')
-)
-
-def toggle_popup(n1, is_open):
-    if n1:
-        return {"display":"block"},not is_open
-    return {"display":"none"}, is_open
-
-# For 'full graph' button of level 4'
-@app.callback(
-        Output('popup-content2', 'style'),
-        Output('popup2', 'is_open'),
-        Input('button_lvl4','n_clicks'),
-        State('popup2', 'is_open')
-)
-
-def toggle_popup(n1, is_open):
-    if n1:
-        return {"display":"block"},not is_open
-    return {"display":"none"}, is_open
-
-# For full graph button of level 5
-@app.callback(
-        Output('popup-content3', 'style'),
-        Output('popup3', 'is_open'),
-        Input('button_lvl5','n_clicks'),
-        State('popup3', 'is_open')
-)
-
-def toggle_popup(n1, is_open):
-    if n1:
-        return {"display":"block"},not is_open
-    return {"display":"none"}, is_open
-
-# For full graph button of level 5
-@app.callback(
-        Output('popup-content4', 'style'),
-        Output('popup4', 'is_open'),
-        Input('button_lvl6','n_clicks'),
-        State('popup4', 'is_open')
-)
-
-def toggle_popup(n1, is_open):
-    if n1:
-        return {"display":"block"},not is_open
-    return {"display":"none"}, is_open
-
+# Callbacks for simulation_page.py -----------------------------------------------------------------------------------------------------------------------------
+# Create callback functions for the "Full Graph" buttons for each level
+for level in sp.levels:
+    @app.callback(
+        Output(f'popup-content{level}', 'style'),
+        Output(f'popup{level}', 'is_open'),
+        Input(f'button_lvl{level}', 'n_clicks'),
+        State(f'popup{level}', 'is_open')
+    )
+    def toggle_popup(n1, is_open, level=level):
+        if n1:
+            return {"display": "block"}, not is_open
+        return {"display": "none"}, is_open
+    
 @app.callback(
     Output('tab-content', 'children'),
-    Output('tab-oo-layout', 'figure'),
-    Input('tabs', 'value'),
-    Input('level-3-button', 'n_clicks'),
-    Input('level-4-button', 'n_clicks'),
-    Input('level-5-button', 'n_clicks'),
-    Input('level-6-button', 'n_clicks')
+    Input('tabs', 'value')
 )
-def update_content_and_trace(tab, level3_clicks, level4_clicks, level5_clicks, level6_clicks):
-    to_show = []
-    if tab == 'tab-1':  
-        for i in sp.levels:
-            if i == 3:
-                to_show.append(sp.tab_bp_layout_level3)
-            if i == 4:
-                to_show.append(sp.tab_bp_layout_level4)
-            if i == 5:
-                to_show.append(sp.tab_bp_layout_level5)
-            if i == 6:
-                to_show.append(sp.tab_bp_layout_level6)
-        tab_content = html.Div(to_show)
-    else:  
-        tab_content = sp.tab_oo_layout
-
-    ctx = dash.callback_context
-    button_id = ctx.triggered[0]['prop_id'].split('.')[0]  
-
-    for trace in sp.traces:
-        trace['opacity'] = 1
-
-    if button_id == 'level-3-button':
-        sp.traces[0]['opacity'] = 1
-        sp.traces[1]['opacity'] = 0.2
-        sp.traces[2]['opacity'] = 0.2
-        sp.traces[3]['opacity'] = 0.2
-    elif button_id == 'level-4-button':
-        sp.traces[0]['opacity'] = 0.2
-        sp.traces[1]['opacity'] = 1
-        sp.traces[2]['opacity'] = 0.2
-        sp.traces[3]['opacity'] = 0.2
-    elif button_id == 'level-5-button':
-        sp.traces[0]['opacity'] = 0.2
-        sp.traces[1]['opacity'] = 0.2
-        sp.traces[2]['opacity'] = 1
-        sp.traces[3]['opacity'] = 0.2
-    elif button_id == 'level-6-button':
-        sp.traces[0]['opacity'] = 0.2
-        sp.traces[1]['opacity'] = 0.2
-        sp.traces[2]['opacity'] = 0.2
-        sp.traces[3]['opacity'] = 1
-
-    trace_figure = {'data': sp.traces, 'layout': sp.layout}
+def update_content(tab):
+    if tab == 'tab-1':
+        return [sp.level_layouts[level] for level in sp.levels]
+    else:
+        return sp.tab_oo_layout
     
-    return tab_content, trace_figure
+# Callback for comparison page --------------------------------------------------------------------------------------------------------------------------------------
 
-# Callback for homepage 
+
+# Callback for homepage ----------------------------------------------------------------------------------------------------------------------------------------------------
 @app.callback(Output('output-div', 'children'), Input('url', 'pathname'))
 def display_page(pathname):
     if pathname == '/input':
@@ -370,6 +290,10 @@ def display_page(pathname):
         return rs.rs_layout
     if pathname == '/simulation_page':
         return sp.sp_layout
+    if pathname == '/compare':
+        return html.H1("Working in progress")
+    if pathname == '/loading_page':
+        return load.load_layout
     else:
         return hp.homepage_layout
 
