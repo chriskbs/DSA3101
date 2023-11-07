@@ -66,7 +66,7 @@ class LibAgent(mesa.Agent):
 
     # Uniformly generate time within specified durations
     if chosen_duration == '0':
-      return float(prob.loc[chosen_duration])
+      return float(prob.loc[chosen_duration].iloc[0])
     elif chosen_duration == 'up to 1 hour':
       return np.random.uniform(0,1) * 60 / 10
     elif chosen_duration == 'up to 2 hours':
