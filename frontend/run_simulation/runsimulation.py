@@ -6,18 +6,20 @@ external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0
 
 # app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
+image_path = "dsa3101-2310-01-library/frontend/CSV.png"
+with open(image_path, "rb") as image_file:
+    encoded_image = base64.b64encode(image_file.read()).decode()
+
 rs_layout = html.Div([
     html.Div([
         html.A(html.Button("Home", className="home-btn", id="home-button"), href="/"),
     ], style={'position': 'absolute', 'top': '20px', 'left': '20px'}),  
 
     html.Div([
-        html.H3("Choose Submission", style={'color': 'navy', 'font-size': '24px'}),
+        html.H3("Choose Submission", style={'color': 'navy', 'font-size': '18px'}),
         dcc.Dropdown(
             options=[
-                {'label': 'First Submission', 'value': 'option1'},
-                {'label': 'Second Submission', 'value': 'option2'},
-                {'label': 'Third Submission', 'value': 'option3'}
+                {'label': 'dummy submission', 'value': 'option1'},
             ],
             style={'width': '150px', 'margin': 'auto'},
         ),
@@ -25,7 +27,7 @@ rs_layout = html.Div([
     ], className="feature"),
 
     html.Div([
-        html.H3("Choose Period", style={'color': 'navy', 'font-size': '24px'}),
+        html.H3("Choose Period", style={'color': 'navy', 'font-size': '18px'}),
         dcc.Dropdown(
             options=[
                 {'label': 'Exam Period', 'value': '9am ~ 10am'},
@@ -36,29 +38,31 @@ rs_layout = html.Div([
         ),
     ], className="feature"),
 
-    html.Div("OR", style={'color': 'navy', 'font-size': '20px', 'margin-top': '10px'}),
+    html.Div("OR", style={'color': 'navy', 'font-size': '20px', 'margin-top': '20px'}),
 
     html.Div([
+        html.Div("CSV Sample", style={'color': 'navy', 'font-size': '18px', 'margin-top': '20px'}),
+        html.Img(src=f"data:image/png;base64,{encoded_image}", style={'width': '200px', 'height': '200px', 'margin-left': '10px', 'margin-top': '10px'}),
         dcc.Upload(
             id='upload-data',
             children=[
-                html.Button("Submit CSV", className="btn", id="submit-button", style={'font-size': '20px'}),
+                html.Button("Submit CSV", className="btn", id="submit-button", style={'font-size': '18px'}),
             ],
             style={'margin-top': '10px'},
             multiple=False
         ),
     ], className="feature"),
-
     html.Div([
-        html.I(className="fas fa-caret-down", style={'color': 'navy', 'font-size': '18px', 'margin-top': '10px'}),
+        html.I(className="fas fa-caret-down", style={'color': 'navy', 'font-size': '18px', 'margin-top': '20px'}),
     ], className="feature"),
 
     html.Div([
-        html.A(html.Button("Run Simulation", className="btn-run", style={'margin-top': '30px', 'font-size': '20px'}), href='/loading_page')
+        html.Button("Run Simulation", className="btn-run", style={'margin-top': '30px', 'font-size': '18px', 'margin-bottom': '30px'})
     ], className="feature"),
     
     html.Div(id='output-data-upload'),
 ], className="feature-container", style={'text-align': 'center', 'padding-top': '50px'})
+
 
 # @app.callback(Output('output-data-upload', 'children'),
 #               Input('upload-data', 'contents'))
