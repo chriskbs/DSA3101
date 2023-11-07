@@ -13,7 +13,7 @@ import os
 
 data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'dummy_data','trial_data_1lvl.csv'))
 levels = list(data['level'].unique()) # identifying the levels that users have chosen to simulate
-data = pd.read_csv("frontend/simulation_page/dummy_data/trial_data_1lvl.csv")
+data = pd.read_csv("simulation_page/dummy_data/trial_data_1lvl.csv")
 
 # If the user only inputs data for one level, the graph would occupy the whole screen else just half the screen
 if len(levels) == 1:
