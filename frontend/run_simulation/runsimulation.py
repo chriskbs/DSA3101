@@ -6,7 +6,7 @@ external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0
 
 # app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-image_path = "dsa3101-2310-01-library/frontend/CSV.png"
+image_path = "dsa3101-2310-01-library/frontend/data/CSV.png"
 with open(image_path, "rb") as image_file:
     encoded_image = base64.b64encode(image_file.read()).decode()
 
