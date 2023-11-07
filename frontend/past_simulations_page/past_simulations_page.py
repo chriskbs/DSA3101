@@ -7,7 +7,8 @@ import dash_bootstrap_components as dbc
 import os
 import json
 
-data_directory = os.path.join(os.path.dirname(__file__), 'data') #'../data'
+# data_directory = os.path.join(os.path.dirname(__file__), 'data') #'../data'
+data_directory = r"data/simulation json/"
 
 # app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -77,7 +78,7 @@ def create_row(simulation_name):
     simulation = html.Div(
         children=[
             html.Div([
-                html.H3(dcc.Link(simulation_name, href = '/simulation_page'), style={'padding': '10px', "text-decoration": "underline"}), # changed 6/11 linking to simulation page 
+                html.H3(dcc.Link(f"{simulation_name}@normal period", href = '/simulation_page'), style={'padding': '10px', "text-decoration": "underline"}), # changed 6/11 linking to simulation page 
                 simulation_scores(simulation_name),
             ], style={'display': 'inline-block', 'width': '85%', 'vertical-align': 'middle'}),
             html.Div([

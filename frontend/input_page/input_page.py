@@ -1,15 +1,7 @@
-import dash
-from dash import Dash, html, dcc, Input, Output, ctx, dcc, State, dash_table
-import dash_daq as daq
-import pandas as pd
-import plotly.express as px
+from dash import html, dcc, ctx, dcc, dash_table
 import dash_bootstrap_components as dbc
-import os
-import json
 
 # app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-
-inputs_directory = r'inputs'
 
 available_levels = dcc.Checklist(
     ['Level_1', 'Level_2', 'Level_3', 'Level_4', 'Level_5', 'Level_6'],
@@ -299,7 +291,7 @@ layout = html.Div([
                            id='submission-name-input-error',
                            hidden=True, 
                            style={'text-align': 'center', 'color': 'red'}),
-                    html.Button(dcc.Link('Confirm', id='confirm-button', href = '/run_simulation')), # changed 6/11 changed href to /run_simulation 
+                    html.Button('Confirm', id='confirm-button'), # changed 6/11 changed href to /run_simulation 
                 ])
             ],
              id='submission-name-modal',
