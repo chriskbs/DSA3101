@@ -14,7 +14,7 @@ IS_ALONE_PROBS = pd.read_csv('notebooks/survey_data/dist_is_alone.csv', index_co
 class LibAgent(mesa.Agent):
   ''' Represents an agent in the library simulation model. '''
 
-  def __init__(self, unique_id, model, exam_period=False):
+  def __init__(self, unique_id, model):
     '''
     Initialize an agent in the library model.
 
@@ -27,7 +27,7 @@ class LibAgent(mesa.Agent):
 
     #agent attributes intitialization
     self.ID = unique_id
-    self.exam_period = exam_period
+    self.exam_period = model.exam_period
     self.min_desirability_threshold = 0
     self.timesteps = self.get_random_timesteps()
     self.chosen_seat = None

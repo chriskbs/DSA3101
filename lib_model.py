@@ -17,7 +17,7 @@ def compute_empty_seats(model):
 class LibModel(mesa.Model):
     ''' A model representing library simulation with individual agents and seating preferences '''
 
-    def __init__(self, df, library_graph):
+    def __init__(self, df, library_graph, exam_period=False):
         '''
         Initialize the library model.
 
@@ -33,6 +33,7 @@ class LibModel(mesa.Model):
         entry_df.columns = ['timestamp', 'entry_counts']   # Aggregate entries every 10 mins
 
         # Attributes and initialization
+        self.exam_period = exam_period
         self.schedule = mesa.time.RandomActivation(self) # schedule for agent activation
         self._curr_step = 0 # current simulation timestep
         self.entry_dist = entry_df.to_dict()['entry_counts'] # entry distribution over time
@@ -44,7 +45,7 @@ class LibModel(mesa.Model):
         self.datacollector = mesa.DataCollector(
             model_reporters={"num_agents": compute_agents},
             agent_reporters={"chosen_seat": "chosen_seat", "satisfaction": "satisfaction"},
-            tables={"SectionsData":["timestamp", "section", "level", "capacity", "empty_seats"]}
+            tables={"SectionsData":["timestamp", "section", "level", "seat_type", "capacity", "empty_seats"]}
         )
 
     def remove_agent_from_graph(self, agent_node):
@@ -152,7 +153,7 @@ class LibModel(mesa.Model):
         for node in self.library_graph.nodes:
             curr_node = self.library_graph.nodes[node]
             if 'empty_seats' in curr_node:
-              curr_row = {"timestamp": self.timestamps[self._curr_step], "section": node, "level":curr_node['level'], "empty_seats": curr_node['empty_seats'], "capacity": curr_node['capacity']}
+              curr_row = {"timestamp": self.timestamps[self._curr_step], "section": node, "level":curr_node['level'], "seat_type":curr_node['seat_type'], "empty_seats": curr_node['empty_seats'], "capacity": curr_node['capacity']}
               self.datacollector.add_table_row("SectionsData", curr_row)
 
         # Progress the schedule by one step and increment the current step

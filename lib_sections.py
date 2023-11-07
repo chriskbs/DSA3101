@@ -31,8 +31,9 @@ def dict_to_graph(library_dict: dict, sections_attrs: dict, connections: dict):
                 section_id, 
                 **sections_dict, 
                 **sections_attrs[sections_dict['seat_type']], 
-                level=levels_dict['level'], 
-                empty_seats=sections_dict['capacity']
+                level=levels_dict['level'],
+                empty_seats=sections_dict['count'] * sections_attrs[sections_dict['seat_type']]['num_seats'], 
+                capacity=sections_dict['count'] * sections_attrs[sections_dict['seat_type']]['num_seats']
             )
             G.add_edge(level_id, section_id)  # Connect level to section
 
