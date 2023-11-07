@@ -54,7 +54,7 @@ rs_layout = html.Div([
     ], className="feature"),
 
     html.Div([
-        html.A(html.Button("Run Simulation", className="btn-run", style={'margin-top': '30px', 'font-size': '20px'}), href='/simulation_page')
+        html.A(html.Button("Run Simulation", className="btn-run", style={'margin-top': '30px', 'font-size': '20px'}), href='/loading_page')
     ], className="feature"),
     
     html.Div(id='output-data-upload'),

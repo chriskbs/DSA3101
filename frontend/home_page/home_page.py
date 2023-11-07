@@ -80,7 +80,7 @@ chat_tab_style = {
 }
 
 chat_tab = html.Div([
-    html.P("Chat with technical team", style=chat_tab_style),
+    html.P("Feedback", style=chat_tab_style),
 ])
 
 homepage_layout = html.Div([

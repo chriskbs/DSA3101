@@ -218,6 +218,10 @@ more_privacy_content = dbc.Row(
 )
 
 layout = html.Div([
+    html.Div([
+        html.A(html.Button("Home", className="home-btn", id="home-button"), href="/"),
+    ], style={'position': 'absolute', 'top': '20px', 'left': '20px'}),  # changed 6/11 included the home page button 
+
     html.Div([ # div for entire page
         html.Div(
             [
@@ -295,7 +299,7 @@ layout = html.Div([
                            id='submission-name-input-error',
                            hidden=True, 
                            style={'text-align': 'center', 'color': 'red'}),
-                    html.Button('Confirm', id='confirm-button'),
+                    html.Button(dcc.Link('Confirm', id='confirm-button', href = '/run_simulation')), # changed 6/11 changed href to /run_simulation 
                 ])
             ],
              id='submission-name-modal',
