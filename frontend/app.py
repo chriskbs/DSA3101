@@ -14,6 +14,7 @@ import run_simulation.runsimulation as rs
 import simulation_page.simulation_page as sp 
 import loading_page.loading as load
 
+inputs_directory = r'data/seat arrangement/'
 
 app = dash.Dash(__name__, suppress_callback_exceptions = True, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -125,6 +126,7 @@ def toggle_modal(submit_clicks, submit_button_hidden):
         return True
 
 @app.callback(
+    Output('url', 'pathname'),
     Output('submission-name-input-error', 'hidden'),
     Output('submission-name-modal', 'is_open', allow_duplicate=True),
     Input('confirm-button', 'n_clicks'),
@@ -133,15 +135,18 @@ def toggle_modal(submit_clicks, submit_button_hidden):
 )
 def confirm_submission(n_clicks, filename):
     # checks inputs folder if any file has the same name
-    for fname in os.listdir(ip.inputs_directory):
-        if os.path.isfile(os.path.join(ip.inputs_directory, fname)):
+    for fname in os.listdir(inputs_directory):
+        if os.path.isfile(os.path.join(inputs_directory, fname)):
             name, extension = os.path.splitext(fname)
-            if name == filename and extension == '.json':
+            if extension != '.json':
+                continue
+            elif name == filename:
                 # prompt user to change name
-                return False, True
+                return dash.no_update, False, True
     # if no, save the file to inputs folder
-    filepath = os.path.join(ip.inputs_directory, f"{filename}.json")
-    
+    if not n_clicks:
+        return dash.no_update, True, False
+    filepath = os.path.join(inputs_directory, f"{filename}.json")
     new_data = {}
     for level in ip.data:
         new_data[level] = []
@@ -178,8 +183,7 @@ def confirm_submission(n_clicks, filename):
     }
     with open(filepath, 'w') as f:
         json.dump(output, f, indent=4)
-
-    return True, False
+    return '/run_simulation', True, False
 
 # Callbacks for past_simulations_page ------------------------------------------------------------------------------------------------------------------------------
 # Add a callback to show the delete modal when a delete button is clicked

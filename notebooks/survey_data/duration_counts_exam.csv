@@ -1,7 +1,7 @@
-,amt_time
-0,0.040160642570281124
-up to 1 hour,0.08835341365461848
-up to 2 hours,0.08835341365461848
-up to 4 hours,0.19678714859437751
-up to 6 hours,0.24096385542168675
-more than 6 hours,0.3453815261044177
+exam_amt_time,count
+0,0.044
+up to 1 hour,0.088
+up to 2 hours,0.088
+up to 4 hours,0.196
+up to 6 hours,0.24
+more than 6 hours,0.344

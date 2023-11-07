@@ -13,7 +13,7 @@ import os
 
 data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'dummy_data','trial_data_1lvl.csv'))
 levels = list(data['level'].unique()) # identifying the levels that users have chosen to simulate
-data = pd.read_csv("frontend/simulation_page/dummy_data/trial_data_1lvl.csv")
+# data = pd.read_csv("simulation_page/dummy_data/trial_data_1lvl.csv")
 
 # If the user only inputs data for one level, the graph would occupy the whole screen else just half the screen
 if len(levels) == 1:
@@ -25,22 +25,27 @@ else:
 
 def create_level_layout(level, data):
     indexes_level = [index for index, value in enumerate(data['level']) if value == level]
-    df_level = data.iloc[indexes_level].sort_values(by=' seat_type')
-    fig_level = px.bar(df_level, x=' seat_type', y=' changeInOccupancy', title=f'Level {level}', color=' changeInOccupancy',
-                       color_discrete_sequence=['red' if value < 0 else 'green' for value in df_level[' changeInOccupancy']],
-                       text=df_level[' changeInOccupancy'],
-                       hover_data={' changeInOccupancy': True})
-
-    fig_level.update_traces(marker=dict(color=['red' if value < 0 else 'green' for value in df_level[' changeInOccupancy']]))  # To ensure that the graph color would be red and green
+    df_level = data.iloc[indexes_level].sort_values(by='section')
+    if level == 'clb_6':
+        level = '6 CLB'
+    elif level == 'wbs_6':
+        level = '6 Chinese Library'
+    else:
+        level = level[-1]
+    fig_level = px.bar(df_level, x='section', y='utilization_rate', title=f'Level {level}', color='utilization_rate',
+                       color_discrete_sequence='rgb(77, 232, 232)',
+                       text=df_level['utilization_rate'],
+                       hover_data={'utilization_rate': True})
+    fig_level.update_traces(marker=dict(color='rgb(77, 232, 232)')) # To ensure that the graph color would be red and green
     fig_level.update_layout(hovermode='closest')
 
     # Create the layout for the given level
     tab_bp_layout_level = html.Div([
         dcc.Graph(id=f'Graph_{level}', figure=fig_level),
-        dbc.Button(f"Full Graph (Level {level})", id=f"button_lvl{level}", n_clicks=0, style={'float': 'right', 'background-color': 'lightblue'}),
+        dbc.Button(f"Full Graph (Level {level})", id=f"button_lvl{level}", n_clicks=0, style={'float': 'right', 'background-color': '#003D7C'}),
         html.Div(id=f"popup-content{level}", children=[
             dbc.Modal([
-                dbc.ModalHeader(f"Level {level}", style={'background-color': 'lightblue', 'font-size': '24px', 'font-weight': 'bold'}),
+                dbc.ModalHeader(f"Level {level}", style={'background-color': '#003D7C', 'font-size': '24px', 'font-weight': 'bold'}),
                 dbc.ModalBody([
                     dcc.Graph(id=f'Graph_{level}', figure=fig_level, style={'width': '100%', 'height': '100%'}),
                 ], style={'background-color': 'white'}),
@@ -72,8 +77,8 @@ sp_layout = html.Div([
                 id="button_close", n_clicks=0, style={'border-radius': '5px', 'float': 'right'}),
     html.Div([
         dcc.Tabs(id='tabs', value='tab-1', children=[
-            dcc.Tab(label='Overall Change in Occupancy', value='tab-1', style={'padding': '10px', 'background-color': 'lightblue'}),
-            dcc.Tab(label='Occupancy overtime', value='tab-2', style={'padding': '10px', 'background-color': 'lightblue'})
+            dcc.Tab(label='Overall Change in Occupancy', value='tab-1', style={'padding': '10px', 'background-color': '#12a4d9'}),
+            dcc.Tab(label='Occupancy overtime', value='tab-2', style={'padding': '10px', 'background-color': '#12a4d9'})
         ]),
         html.Div(id='tab-content')
     ])], style={'padding': '10px'})
