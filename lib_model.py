@@ -13,12 +13,13 @@ def compute_agents(model):
 class LibModel(mesa.Model):
     """A model with some number of agents."""
 
-    def __init__(self, df, library_graph):
+    def __init__(self, df, library_graph, exam_period=False):
         df['Datetime'] = pd.to_datetime(df['Datetime'])
         entry_df = df.set_index('Datetime')
         entry_df = entry_df[entry_df['Direction']=='Entry']['Direction'].resample('10min',  label='left').count().reset_index()
         entry_df.columns = ['timestamp', 'entry_counts'] # how many entries every 10 mins
 
+        self.exam_period = exam_period
         self.schedule = mesa.time.RandomActivation(self)
         self._curr_step = 0
         self.entry_dist = entry_df.to_dict()['entry_counts']
@@ -29,7 +30,7 @@ class LibModel(mesa.Model):
         self.datacollector = mesa.DataCollector(
             model_reporters={"num_agents": compute_agents},
             agent_reporters={"chosen_seat": "chosen_seat", "satisfaction": "satisfaction"},
-            tables={"SectionsData":["timestamp", "section", "level", "capacity", "empty_seats"]}
+            tables={"SectionsData":["timestamp", "section", "level", "seat_type", "capacity", "empty_seats"]}
         )
 
     def remove_agent_from_graph(self, agent_node):
@@ -89,7 +90,7 @@ class LibModel(mesa.Model):
         for node in self.library_graph.nodes:
             curr_node = self.library_graph.nodes[node]
             if 'empty_seats' in curr_node:
-              curr_row = {"timestamp": self.timestamps[self._curr_step], "section": node, "level":curr_node['level'], "empty_seats": curr_node['empty_seats'], "capacity": curr_node['capacity']}
+              curr_row = {"timestamp": self.timestamps[self._curr_step], "section": node, "level":curr_node['level'], "seat_type":curr_node['seat_type'], "empty_seats": curr_node['empty_seats'], "capacity": curr_node['capacity']}
               self.datacollector.add_table_row("SectionsData", curr_row)
 
         self.schedule.step()
