@@ -153,8 +153,11 @@ class LibModel(mesa.Model):
         for node in self.library_graph.nodes:
             curr_node = self.library_graph.nodes[node]
             if 'empty_seats' in curr_node:
-              curr_row = {"timestamp": self.timestamps[self._curr_step], "section": node, "level":curr_node['level'], "seat_type":curr_node['seat_type'], "empty_seats": curr_node['empty_seats'], "capacity": curr_node['capacity']}
-              self.datacollector.add_table_row("SectionsData", curr_row)
+                curr_row = {
+                    "timestamp": self.timestamps[self._curr_step], "section": node, "level":curr_node['level'], 
+                    "seat_type":curr_node['seat_type'], "empty_seats": curr_node['empty_seats'], "capacity": curr_node['capacity']
+                }
+                self.datacollector.add_table_row("SectionsData", curr_row)
 
         # Progress the schedule by one step and increment the current step
         self.schedule.step()
