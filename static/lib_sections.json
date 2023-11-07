@@ -4,66 +4,66 @@
     {
         "level": "clb_3",
         "sections": [
-            {"seat_type": "movable_seat", "count": 100},
-            {"seat_type": "4_man_seat", "count": 50},
-            {"seat_type": "8_man_seat", "count": 100},
-            {"seat_type": "window_seat", "count": 100},
-            {"seat_type": "sofa", "count": 100},
-            {"seat_type": "soft_seat", "count":100},
-            {"seat_type": "cubicle", "count": 40},
-            {"seat_type": "d_cubicle", "count": 40},
-            {"seat_type": "diagonal_seat", "count": 40}
+            {"seat_type": "movable_seat", "count": 50},
+            {"seat_type": "4_man_seat", "count": 0},
+            {"seat_type": "8_man_seat", "count": 0},
+            {"seat_type": "window_seat", "count": 0},
+            {"seat_type": "sofa", "count": 10},
+            {"seat_type": "soft_seat", "count":30},
+            {"seat_type": "cubicle", "count": 0},
+            {"seat_type": "d_cubicle", "count": 30},
+            {"seat_type": "diagonal_seat", "count": 0}
     ]},
     {
         "level": "clb_4",
         "sections": [
-            {"seat_type": "movable_seat", "count": 120},
-            {"seat_type": "4_man_seat", "count": 50},
-            {"seat_type": "8_man_seat", "count": 100},
-            {"seat_type": "window_seat", "count": 100},
-            {"seat_type": "sofa", "count": 100},
-            {"seat_type": "soft_seat", "count":100},
-            {"seat_type": "cubicle", "count": 40},
-            {"seat_type": "d_cubicle", "count": 40},
-            {"seat_type": "diagonal_seat", "count": 40}
+            {"seat_type": "movable_seat", "count": 0},
+            {"seat_type": "4_man_seat", "count": 0},
+            {"seat_type": "8_man_seat", "count": 0},
+            {"seat_type": "window_seat", "count": 50},
+            {"seat_type": "sofa", "count": 10},
+            {"seat_type": "soft_seat", "count":60},
+            {"seat_type": "cubicle", "count": 0},
+            {"seat_type": "d_cubicle", "count": 0},
+            {"seat_type": "diagonal_seat", "count": 0}
     ]},
     {
         "level": "clb_5",
         "sections": [
-            {"seat_type": "movable_seat", "count": 120},
-            {"seat_type": "4_man_seat", "count": 50},
-            {"seat_type": "8_man_seat", "count": 100},
-            {"seat_type": "window_seat", "count": 100},
-            {"seat_type": "sofa", "count": 100},
-            {"seat_type": "soft_seat", "count":100},
-            {"seat_type": "cubicle", "count": 40},
-            {"seat_type": "d_cubicle", "count": 40},
-            {"seat_type": "diagonal_seat", "count": 40}
+            {"seat_type": "movable_seat", "count": 0},
+            {"seat_type": "4_man_seat", "count": 30},
+            {"seat_type": "8_man_seat", "count": 50},
+            {"seat_type": "window_seat", "count": 50},
+            {"seat_type": "sofa", "count": 0},
+            {"seat_type": "soft_seat", "count":0},
+            {"seat_type": "cubicle", "count": 0},
+            {"seat_type": "d_cubicle", "count": 0},
+            {"seat_type": "diagonal_seat", "count": 0}
     ]},
     {
         "level": "clb_6",
         "sections": [
-            {"seat_type": "movable_seat", "count": 120},
-            {"seat_type": "4_man_seat", "count": 50},
-            {"seat_type": "8_man_seat", "count": 100},
-            {"seat_type": "window_seat", "count": 100},
-            {"seat_type": "sofa", "count": 100},
-            {"seat_type": "soft_seat", "count":100},
+            {"seat_type": "movable_seat", "count": 0},
+            {"seat_type": "4_man_seat", "count": 0},
+            {"seat_type": "8_man_seat", "count": 0},
+            {"seat_type": "window_seat", "count": 50},
+            {"seat_type": "sofa", "count": 0},
+            {"seat_type": "soft_seat", "count":0},
             {"seat_type": "cubicle", "count": 40},
-            {"seat_type": "d_cubicle", "count": 40},
-            {"seat_type": "diagonal_seat", "count": 40}
+            {"seat_type": "d_cubicle", "count": 0},
+            {"seat_type": "diagonal_seat", "count": 100}
     ]},
     {
         "level": "wbs_6",
         "sections": [
-            {"seat_type": "movable_seat", "count": 120},
-            {"seat_type": "4_man_seat", "count": 50},
-            {"seat_type": "8_man_seat", "count": 100},
-            {"seat_type": "window_seat", "count": 100},
-            {"seat_type": "sofa", "count": 100},
-            {"seat_type": "soft_seat", "count":100},
+            {"seat_type": "movable_seat", "count": 0},
+            {"seat_type": "4_man_seat", "count": 0},
+            {"seat_type": "8_man_seat", "count": 0},
+            {"seat_type": "window_seat", "count": 50},
+            {"seat_type": "sofa", "count": 0},
+            {"seat_type": "soft_seat", "count":0},
             {"seat_type": "cubicle", "count": 40},
-            {"seat_type": "d_cubicle", "count": 40},
-            {"seat_type": "diagonal_seat", "count": 40}
+            {"seat_type": "d_cubicle", "count": 0},
+            {"seat_type": "diagonal_seat", "count": 100}
     ]}
 ]}
