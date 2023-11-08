@@ -30,9 +30,9 @@ rs_layout = html.Div([
         html.H3("Choose Period", style={'color': 'navy', 'font-size': '18px'}),
         dcc.Dropdown(
             options=[
+                {'label': 'Normal Period', 'value': 'normal'},
                 {'label': 'Exam Period', 'value': 'exam'},
                 {'label': 'Event Period', 'value': 'event'},
-                {'label': 'Normal Period', 'value': 'normal'},
             ],
             style={'width': '150px', 'margin': 'auto'},
         ),
@@ -46,7 +46,7 @@ rs_layout = html.Div([
         dcc.Upload(
             id='upload-data',
             children=[
-                html.Button("Submit CSV", className="btn", id="submit-button", style={'font-size': '18px'}),
+                html.Button("Submit Custom Period", className="btn", id="submit-button", style={'font-size': '18px'}),
             ],
             style={'margin-top': '10px'},
             multiple=False
