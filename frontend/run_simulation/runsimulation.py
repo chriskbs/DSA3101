@@ -4,7 +4,7 @@ import base64
 
 external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css']
 
-# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 image_path = r'data/CSV.png'
 with open(image_path, "rb") as image_file:
@@ -63,6 +63,7 @@ rs_layout = html.Div([
     html.Div(id='output-data-upload'),
 ], className="feature-container", style={'text-align': 'center', 'padding-top': '50px'})
 
+app.layout = rs_layout
 
 # @app.callback(Output('output-data-upload', 'children'),
 #               Input('upload-data', 'contents'))
@@ -71,5 +72,5 @@ rs_layout = html.Div([
 #         content = list_of_contents[0]
 #         return content
 
-# if __name__ == '__main__':
-#     app.run_server(debug=True)
+if __name__ == '__main__':
+    app.run_server(debug=False)
