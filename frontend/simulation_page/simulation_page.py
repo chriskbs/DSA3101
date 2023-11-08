@@ -24,15 +24,43 @@ else:
     x = "48%"
     y = "48%"
 
+hour_map = {
+    0: '00:00',
+    1: '01:00',
+    2: '02:00',
+    3: '03:00',
+    4: '04:00',
+    5: '05:00',
+    6: '06:00',
+    7: '07:00', 
+    8: '08:00',
+    9: '09:00',
+    10: '10:00',
+    11: '11:00',
+    12: '12:00',
+    13: '13:00',
+    14: '14:00',
+    15: '15:00',
+    16: '16:00',
+    17: '17:00',
+    18: '18:00',
+    19: '19:00',
+    20: '20:00',
+    21: '21:00',
+    22: '22:00',
+    24: '23:00',
+    25: '00:00',
+}
+
 def create_level_layout(level, data):
     indexes_level = [index for index, value in enumerate(data['level']) if value == level]
     df_level = data.iloc[indexes_level].sort_values(by='section')
-    if level == 'clb_6':
-        level = '6 CLB'
-    elif level == 'wbs_6':
-        level = '6 Chinese Library'
-    else:
-        level = level[-1]
+    # if level == 'clb_6':
+    #     level = '6 CLB'
+    # elif level == 'wbs_6':
+    #     level = '6 Chinese Library'
+    # else:
+    #     level = level[-1]
     fig_level = px.bar(df_level, x='section', y='utilization_rate', title=f'Level {level}', color='utilization_rate',
                        color_discrete_sequence='rgb(77, 232, 232)',
                        text=df_level['utilization_rate'],
@@ -57,6 +85,18 @@ def create_level_layout(level, data):
 
 
 level_layouts = {level: create_level_layout(level, data) for level in levels}
+tab1_content = html.Div([
+    # dcc.Slider(0, 20, 5, id = 'my-slider'),
+    dcc.Slider(
+        id = 'my-slider',
+        marks = hour_map,
+        value = 0, 
+        step = None
+    ),
+    html.Div(
+        id = 'slider-output-container' # my slider output should contain the graphs 
+    )
+])
 
 # Sample data for four library floors
 floors = ["Floor 3", "Floor 4", "Floor 5", "Floor 6"]
