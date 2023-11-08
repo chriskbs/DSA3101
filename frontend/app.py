@@ -269,16 +269,26 @@ for level in sp.levels:
         if n1:
             return {"display": "block"}, not is_open
         return {"display": "none"}, is_open
-    
+
+# added this callback 
+@app.callback(
+    Output('slider-output-container', 'children'),
+    Input('my-slider', 'value')
+)
+def update_output(value):
+    return [sp.level_layouts[level] for level in sp.levels]
+
 @app.callback(
     Output('tab-content', 'children'),
     Input('tabs', 'value')
 )
 def update_content(tab):
     if tab == 'tab-1':
-        return [sp.level_layouts[level] for level in sp.levels]
+        # return [sp.level_layouts[level] for level in sp.levels]
+        return sp.tab1_content
     else:
         return sp.tab_oo_layout
+    
     
 # Callback for comparison page --------------------------------------------------------------------------------------------------------------------------------------
 
@@ -303,4 +313,4 @@ def display_page(pathname):
 
     
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
