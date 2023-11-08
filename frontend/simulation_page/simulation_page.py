@@ -68,7 +68,7 @@ data = {
 }
 
 button_style = {'backgroundColor': 'black', 'color': 'white', 'borderRadius': '15px', 'margin': '5px'}
-
+tab_style = {'padding': '10px', 'background-color': '#003D7C', 'color':'white', 'fontWeight':'bold', 'fontSize':'20px'}
 # # The overall skeleton
 sp_layout = html.Div([
     html.Button(dcc.Link("Home", href = '/', style = {'text-decoration':'none'}), 
@@ -77,8 +77,8 @@ sp_layout = html.Div([
                 id="button_close", n_clicks=0, style={'border-radius': '5px', 'float': 'right'}),
     html.Div([
         dcc.Tabs(id='tabs', value='tab-1', children=[
-            dcc.Tab(label='Overall Change in Occupancy', value='tab-1', style={'padding': '10px', 'background-color': '#12a4d9'}),
-            dcc.Tab(label='Occupancy overtime', value='tab-2', style={'padding': '10px', 'background-color': '#12a4d9'})
+            dcc.Tab(label='Overall Change in Occupancy', value='tab-1', style= tab_style),
+            dcc.Tab(label='Occupancy overtime', value='tab-2', style= tab_style)
         ]),
         html.Div(id='tab-content')
     ])], style={'padding': '10px'})
