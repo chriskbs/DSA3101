@@ -1,4 +1,5 @@
 import networkx as nx
+import json
 
 # Function taking json as input, return networkx graph
 def dict_to_graph(library_dict: dict, sections_attrs: dict, connections: dict):
@@ -45,3 +46,15 @@ def dict_to_graph(library_dict: dict, sections_attrs: dict, connections: dict):
     
     # Return the networkx Graph representing the library
     return G
+
+def create_default_graph(path_to_capacities):
+    '''
+    Create default graph for library sections based on default connections, and attributes
+    '''
+    lib_sections_file = open(path_to_capacities)
+    lib_sections = json.load(lib_sections_file)
+    sections_attrs_file = open('static/sections_attrs.json')
+    sections_attrs = json.load(sections_attrs_file)
+    connections_file = open('static/connections.json')
+    connections = json.load(connections_file)
+    return dict_to_graph(lib_sections, sections_attrs, connections)

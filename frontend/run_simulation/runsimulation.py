@@ -30,9 +30,9 @@ rs_layout = html.Div([
         html.H3("Choose Period", style={'color': 'navy', 'font-size': '18px'}),
         dcc.Dropdown(
             options=[
-                {'label': 'Exam Period', 'value': '9am ~ 10am'},
-                {'label': 'Event Period', 'value': '10am ~ 11am'},
-                {'label': 'Normal Period', 'value': '9am ~ 10am'},
+                {'label': 'Exam Period', 'value': 'exam'},
+                {'label': 'Event Period', 'value': 'event'},
+                {'label': 'Normal Period', 'value': 'normal'},
             ],
             style={'width': '150px', 'margin': 'auto'},
         ),
