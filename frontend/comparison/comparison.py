@@ -3,6 +3,7 @@ from dash import dcc, html
 import plotly.express as px
 import pandas as pd
 from dash.dependencies import Input, Output, State
+import dash_bootstrap_components as dbc
 import csv
 import json
 import os
@@ -11,51 +12,84 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 colors = {"graphBackground": "#F5F5F5", "background": "#ffffff", "text": "#000000"}
 
-criteria = [{'label': 'Score', 'value': 'Score'},
-            {'label': 'Privacy', 'value': 'Privacy'},
-            {'label': 'Crowd Level', 'value': 'Crowd Level'},
-            {'label': 'Comfort', 'value': 'Comfort'},
-            {'label': 'Scenery', 'value': 'Scenery'},
-            {'label': 'Ease of Access', 'value': 'Ease of Access'}
-]
 
-### TO ADD TO past_simulations.py
-# dcc.Location(id="url", refresh=False),  # Location component for URL handling
-#     html.A("Go to Page 2", href="/comparison-page"),
+model_2 = {
+    "name": "random submission2",
+    "score": 50,
+    "privacy": 20,
+    "crowd level": 80,
+    "comfort": 60,
+    "scenery": 76,
+    "lighting": 89,
+    "ease of access": 90
+}
 
+model_3 = {
+    "name": "random submission3",
+    "score": 55,
+    "privacy": 30,
+    "crowd level": 70,
+    "comfort": 65,
+    "scenery": 72,
+    "lighting": 85,
+    "ease of access": 88
+}
+
+models_data = [model_2, model_3]
+
+criteria = [key for key in model_2.keys() if key != 'name']
+
+differences = {criterion: model_2[criterion] - model_3[criterion] for criterion in criteria}
+
+def create_bar_graph():
+    fig = px.bar(
+        x=criteria,
+        y=[differences[criterion] for criterion in criteria],
+        labels={'x': 'Criteria', 'y': 'Difference'},
+        title=f"{model_2['name']} vs. {model_3['name']} Differences"
+    )
+    return fig
 
 app.layout = html.Div([
-    dcc.Link(html.Button('Go Back to Previous Page', href='/past-simulation-page', refresh = True)), 
-    html.H1("Model Score Comparison"),
-    dcc.Location(id='/comparison-page', refresh=False),  # Location component for URL handling
-    dcc.Dropdown(
-        id='criteria-dropdown',
-        options = criteria,
-        value='Score'
-    ),
-    html.Div(id='comparison-results'),
+    html.H1("Model Comparison"),
+    html.Table([
+        html.Tr([html.Th("Criterion"), html.Th("Model 2"), html.Th("Model 3"), html.Th("Difference")]),
+    ] + [
+        html.Tr([html.Td(criterion), html.Td(model_2[criterion]), html.Td(model_3[criterion]), html.Td(differences[criterion])])
+        for criterion in criteria
+    ],
+    style_cell_conditional=[
+        {'if': {'column_id': 'Criterion'},
+         'width': '100%'},
+        {'if': {'column_id': 'Model 2'},
+         'width': '30%'},
+        {'if': {'column_id': 'Model 3'},
+         'width': '30%'},
+    ]),
+    # Button to toggle between models
+    html.Button("Toggle Model", id="toggle-button"),
+
+    # Bar graph
+    dcc.Graph(id='model-differences', figure= create_bar_graph()),
+
+    dcc.Input(style={"margin-left": "15px"})
 ])
 
+@app.callback(
+    Output('model-differences', 'figure')
+)
+def toggle_models(n_clicks):
+    global selected_model
+    if n_clicks and n_clicks % 2 == 0:
+        selected_model = model_2
+        button_text = "Toggle to Model 3"
+    else:
+        selected_model = model_3
+        button_text = "Toggle to Model 2"
 
-@app.callback(Output('comparison-results', 'children'),
-              Input('/past-simulation-page', 'search'),
-              Input('criteria-dropdown', 'value'))
+    fig = create_bar_graph()
 
-def perform_comparison(n_clicks, model1, model2, criteria):
-    if n_clicks > 0 and model1 and model2 and criteria:
-        # Load JSON data for the selected models
-        with open(os.path.join(data_directory, model1 + '.json')) as f1:
-            data1 = json.load(f1)
-        with open(os.path.join(data_directory, model2 + '.json')) as f2:
-            data2 = json.load(f2)
-        # Extract the criteria scores
-        score1 = data1.get(criteria, 0)
-        score2 = data2.get(criteria, 0)
-
-        # Create a comparison result message
-        comparison_result = f"{model1} vs. {model2} based on {criteria}: {score1} vs. {score2}"
-
-        return html.H2(comparison_result)
+    return fig, button_text
 
 if __name__ == '__main__':
     app.run_server(debug=False)
