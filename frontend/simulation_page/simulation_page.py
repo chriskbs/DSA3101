@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import random
 import plotly.graph_objs as go
 import os
+import numpy as np
 
 # Initializing the app
 # app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -63,9 +64,14 @@ time_range = [datetime(2023, 1, 1, 9, 0), datetime(2023, 1, 2, 8, 0)]
 time_interval = timedelta(minutes=15)
 timestamps = [time_range[0] + i * time_interval for i in range(int((time_range[1] - time_range[0]).total_seconds() / time_interval.total_seconds()))]
 
-data = {
-    floor: [random.randint(0, 100) for _ in range(len(timestamps))] for floor in floors
-}
+def generate_bell_curve(center, std_dev, length, floor_name):
+    x = np.linspace(center - 3 * std_dev, center + 3 * std_dev, length)
+    y = 1 / (std_dev * np.sqrt(2 * np.pi)) * np.exp(-0.5 * ((x - center) / std_dev) ** 2)
+    return y, floor_name
+
+peak_times = [datetime(2023, 1, 1, 11, 0), datetime(2023, 1, 1, 10, 0), datetime(2023, 1, 1, 14, 0), datetime(2023, 1, 1, 16, 0)]
+std_deviation = 2  
+
 
 button_style = {'backgroundColor': 'black', 'color': 'white', 'borderRadius': '15px', 'margin': '5px'}
 tab_style = {'padding': '10px', 'background-color': '#003D7C', 'color':'white', 'fontWeight':'bold', 'fontSize':'20px'}
@@ -99,14 +105,15 @@ sp_layout = html.Div([
 # Time series plot for 'Occupancy Overtime'
 traces = []
 
-for floor in floors:
+for i, peak_time in enumerate(peak_times):
+    curve_data, floor_name = generate_bell_curve(peak_time.timestamp(), std_deviation, len(timestamps), floors[i])
     trace = go.Scatter(
         x=timestamps,
-        y=data[floor],
+        y=curve_data,
         mode='lines',
-        name=floor,
+        name=floor_name,
         line_shape='spline',
-        opacity=1  
+        opacity=1  # Set the opacity to control visibility
     )
     traces.append(trace)
 
@@ -137,12 +144,6 @@ layout['xaxis']['tickformat'] = '%H:%M'
 
 tab_oo_layout = html.Div([
     dcc.Graph(figure={'data': traces, 'layout': layout}, id='tab-oo-layout'),
-    html.Div([
-        html.Button("Level 3 only", id="level-3-button", style=button_style),
-        html.Button("Level 4 only", id="level-4-button", style=button_style),
-        html.Button("Level 5 only", id="level-5-button", style=button_style),
-        html.Button("Level 6 only", id="level-6-button", style=button_style),
-    ], style={'text-align': 'center'}),
 ])
 
 # Callback for switching between tabs and displaying the full graphs
