@@ -59,7 +59,7 @@ class LibAgent(mesa.Agent):
   def generate_time(self, prob):
     ''' Generate durations based on probability distribution. '''
     durations = prob.index.values
-    probabilities = prob.amt_time.values
+    probabilities = prob.dist.values
     
     # Choose the duration category
     chosen_duration = np.random.choice(durations, p=probabilities)
