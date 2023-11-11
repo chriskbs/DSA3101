@@ -57,14 +57,6 @@ app.layout = html.Div([
     ] + [
         html.Tr([html.Td(criterion), html.Td(model_2[criterion]), html.Td(model_3[criterion]), html.Td(differences[criterion])])
         for criterion in criteria
-    ],
-    style_cell_conditional=[
-        {'if': {'column_id': 'Criterion'},
-         'width': '100%'},
-        {'if': {'column_id': 'Model 2'},
-         'width': '30%'},
-        {'if': {'column_id': 'Model 3'},
-         'width': '30%'},
     ]),
     # Button to toggle between models
     html.Button("Toggle Model", id="toggle-button"),
