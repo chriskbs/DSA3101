@@ -1,5 +1,8 @@
 from dash import html, dcc, ctx, dcc, dash_table
 import dash_bootstrap_components as dbc
+import json
+import requests
+import dash.exceptions
 
 # app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -430,6 +433,46 @@ def update_count(level, count, item_name):
 #     Input('confirm-button', 'n_clicks'),
 #     State('submission-name-input', 'value'),
 #     prevent_initial_call=True
+
+# For connecting APIs
+# def submit_inputs(n_clicks, filename):
+#     if n_clicks is None:
+#         raise dash.exceptions.PreventUpdate
+
+#     if not filename:
+#         return True, False, html.Label("Please provide a submission name."), False
+#     else:
+#         submission_data = {
+#             "submission_name": filename,
+#             "levels": []
+#         }
+
+#         for level in data:
+#             level_data = {
+#                 "level": level,
+#                 "sections": [{"seat_type": seat["Seat Type"], "count": seat["Count"]} for seat in data[level]]
+#             }
+#             submission_data["levels"].append(level_data)
+
+#         submission_json = json.dumps(submission_data)
+
+#         upload_url = 'http://127.0.0.1:5000/upload'
+
+#         files = {
+#             'json': ('submission.json', submission_json),
+#         }
+
+#         # Make the POST request to the API
+#         response = requests.post(upload_url, params={'exam_period': 'False'}, files=files)
+
+#         # Check the response
+#         if response.status_code == 200:
+#             result = response.json()
+#             return True, True, html.Label(f'Files processed successfully. Result JSON file: {result["result_json"]}'), True
+#         else:
+#             return True, False, html.Label(f'Error: {response.status_code}. {response.json()}'), False
+
+    
 # )
 # def confirm_submission(n_clicks, filename):
 #     # checks inputs folder if any file has the same name
