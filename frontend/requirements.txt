@@ -3,3 +3,4 @@ pandas
 dash-daq
 plotly-express
 dash-bootstrap-components
+dash-loading-spinners
