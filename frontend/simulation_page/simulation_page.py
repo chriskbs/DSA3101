@@ -8,6 +8,7 @@ import random
 import plotly.graph_objs as go
 import os
 import numpy as np
+import requests
 
 # Initializing the app
 # app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -196,6 +197,38 @@ tab_oo_layout = html.Div([
 #         return [level_layouts[level] for level in levels]
 #     else:
 #         return tab_oo_layout
+
+
+# Callback for connecting API and switching between graphs
+# @app.callback(
+#     Output('tab-content', 'children'),
+#     Input('tabs', 'value'),
+#     Input('run-simulation-button', 'n_clicks'),
+#     prevent_initial_call=True
+# )
+# def update_content(tab, n_clicks):
+#     if n_clicks is None:
+#         raise PreventUpdate
+
+#     if tab == 'tab-1':
+#         return [level_layouts[level] for level in levels]
+#     else:
+#         results_url = 'http://127.0.0.1:5000/results'
+
+#         # Make a GET request to the API
+#         response = requests.get(results_url)
+
+#         if response.status_code == 200:
+#             # Assume the API returns a JSON object with the necessary information
+#             result = response.json()
+
+#             return [
+#                 tab_oo_layout,
+#                 html.Div(f"Result CSV file: {result['result_csv']}", style={'color': 'navy', 'font-size': '18px'}),
+#                 html.Div(f"Result JSON file: {result['result_json']}", style={'color': 'navy', 'font-size': '18px'})
+#             ]
+#         else:
+#             return [html.Div(f"Error: {response.status_code}\n{response.json()}", style={'color': 'red', 'font-size': '18px'})]
 
 # if __name__ == '__main__':
 #     app.run_server(debug=True)
