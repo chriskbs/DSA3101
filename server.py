@@ -71,8 +71,8 @@ def upload_files():
             json.dump(result_json, fi, indent = 4)
 
         return jsonify({'message': 'Files processed successfully',
-                        'result_csv': result_csv_filename,
-                        'result_json': result_json_filename}), 200
+                        'result_csv': f'{submission_name}.csv',
+                        'result_json': f'{submission_name}.json'}), 200
     else:
         return jsonify({'error': 'Invalid file format'}), 400
     
