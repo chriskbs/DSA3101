@@ -1,6 +1,5 @@
 import dash
 from dash import dcc, html, Input, Output
-from dash.exceptions import PreventUpdate
 import base64
 import requests
 from io import BytesIO
@@ -9,7 +8,8 @@ external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-image_path = r'data/CSV.png'
+image_path = "C:/Users/Yan Zhang/OneDrive - National University of Singapore/Desktop/libraryfrontend/CSV.png"
+
 with open(image_path, "rb") as image_file:
     encoded_image = base64.b64encode(image_file.read()).decode()
 
