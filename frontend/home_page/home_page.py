@@ -93,18 +93,18 @@ homepage_layout = html.Div([
         html.Img(src=image_url, style=translucent_image_style),
         html.Div([
             html.Div([
-                html.Button(children = dcc.Link("Check past simulations", href = '/past_simulations', style = {'text-decoration':'none'}), 
-                            id="check-past-simulations-button", style=button_style),
+                html.A(html.Button("Check past simulations", 
+                            id="check-past-simulations-button", style=button_style), href = '/past_simulations', style = {'width': '100%', 'text-decoration':'None'}),
                 html.P("📊", style=centered_icon_style),
             ], style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'center', 'margin-bottom': '20px'}),
             html.Div([
-                html.Button(children = dcc.Link("Add new seat arrangement", href = '/input', style = {'text-decoration':'none'}), 
-                            id="add-seat-arrangement-button", style=button_style),
+                html.A(html.Button("Add new seat arrangement", 
+                            id="add-seat-arrangement-button", style=button_style),href = '/input', style = {'width' : '100%', 'text-decoration':'None'}),
                 html.P("➕", style=centered_icon_style),
             ], style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'center', 'margin-bottom': '20px'}),
             html.Div([
-                html.Button(children = dcc.Link("Choose seat arrangement & simulated period to run model", href = '/run_simulation', style = {'text-decoration':'None'}), 
-                            id="run-model-button", style=button_style),
+                html.A(html.Button("Choose seat arrangement & simulated period to run model", 
+                            id="run-model-button", style=button_style), href = '/run_simulation', style = {'width' : '100%', 'text-decoration':'None'}),
                 html.P("⚙️", style=centered_icon_style),
             ], style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'center'}),
         ],
