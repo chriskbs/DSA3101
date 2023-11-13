@@ -76,35 +76,39 @@ app.layout = rs_layout
 #         return content
 
 
-@app.callback(Output('output-data-upload', 'children'),
-              Input('upload-data', 'contents'))
-def update_output(list_of_contents):
-    if list_of_contents is not None:
-        content = list_of_contents[0]
-        return content
+# @app.callback(Output('output-data-upload', 'children'),
+#               [Input('upload-data', 'contents'),
+#                Input('submit-button', 'n_clicks')])
+# def update_output(list_of_contents, n_clicks):
+#     ctx = dash.callback_context
+#     triggered_id = ctx.triggered_id if ctx.triggered_id else 'No trigger'
+    
+#     if triggered_id == 'upload-data.contents':
+#         if list_of_contents is not None:
+#             content = list_of_contents[0]
+#             return content
+#     elif triggered_id == 'submit-button.n_clicks':
+#         if n_clicks is None:
+#             raise PreventUpdate
 
-@app.callback(Output('output-data-upload', 'children'),
-              Input('run-simulation-button', 'n_clicks'))
-def run_simulation(n_clicks):
-    if n_clicks is None:
-        raise PreventUpdate
+#         upload_url = 'http://127.0.0.1:5000/upload'
 
-    upload_url = 'http://127.0.0.1:5000/upload'
+#         files = {
+#             'json': ('submission.json', open('static/lib_sections.json', 'rb')),
+#             'csv': ('entries.csv', open('data/20230413_clb_taps.csv', 'rb'))
+#         }
 
-    files = {
-        'json': ('submission.json', open('static/lib_sections.json', 'rb')),
-        'csv': ('entries.csv', open('data/20230413_clb_taps.csv', 'rb'))
-    }
+#         response = requests.post(upload_url, params={'exam_period': 'False'}, files=files)
 
-    response = requests.post(upload_url, params={'exam_period': 'False'}, files=files)
+#         if response.status_code == 200:
+#             result = response.json()
+#             message = f'Files processed successfully. Result CSV file: {result["result_csv"]}, Result JSON file: {result["result_json"]}'
+#         else:
+#             message = f'Error: {response.status_code}\n{response.json()}'
 
-    if response.status_code == 200:
-        result = response.json()
-        message = f'Files processed successfully. Result CSV file: {result["result_csv"]}, Result JSON file: {result["result_json"]}'
-    else:
-        message = f'Error: {response.status_code}\n{response.json()}'
+#         return html.Div(message)
 
-    return html.Div(message)
-
+#     return None  
+    
 if __name__ == '__main__':
     app.run_server(debug=True)
