@@ -1,0 +1,17 @@
+services:
+  server-container:
+    build:
+      context: backend/
+      dockerfile: Dockerfile
+    container_name: server-container
+    ports:
+      - "5000:5000"
+
+  mydash:
+    build:
+      context: frontend/
+      dockerfile: Dockerfile
+    container_name: mydash
+    hostname: localhost
+    ports:
+      - "9002:8050"
