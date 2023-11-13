@@ -4,12 +4,12 @@ import mesa
 import networkx as nx
 
 # Obtaining the distributions for agent attributes from CSV files
-GATE_PROBS = pd.read_csv('data/survey_data/dist_entry_gates.csv', index_col=0)
-PREFS_PROBS = pd.read_csv('data/survey_data/dist_factors.csv', index_col=0)
-USUAL_TIMESPENT_PROBS = pd.read_csv('data/survey_data/duration_counts.csv', index_col=0)
-EXAM_TIMESPENT_PROBS = pd.read_csv('data/survey_data/duration_counts_exam.csv', index_col=0)
-LEVEL_PREF_PROBS = pd.read_csv('data/survey_data/dist_lvl_rate.csv', index_col=0) #read csv file first jic need to use
-IS_ALONE_PROBS = pd.read_csv('data/survey_data/dist_is_alone.csv', index_col=0) #read csv file first jic need use
+GATE_PROBS = pd.read_csv('backend\data\survey_data\dist_entry_gates.csv', index_col=0)
+PREFS_PROBS = pd.read_csv('backend\data\survey_data\dist_factors.csv', index_col=0)
+USUAL_TIMESPENT_PROBS = pd.read_csv('backend\data\survey_data\duration_counts.csv', index_col=0)
+EXAM_TIMESPENT_PROBS = pd.read_csv('backend\data\survey_data\duration_counts_exam.csv', index_col=0)
+LEVEL_PREF_PROBS = pd.read_csv('backend\data\survey_data\dist_lvl_rate.csv', index_col=0) #read csv file first jic need to use
+IS_ALONE_PROBS = pd.read_csv('backend\data\survey_data\dist_is_alone.csv', index_col=0) #read csv file first jic need use
 
 class LibAgent(mesa.Agent):
   ''' Represents an agent in the library simulation model. '''
