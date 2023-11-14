@@ -64,11 +64,11 @@ app.layout = html.Div([
     # Bar graph
     dcc.Graph(id='model-differences', figure= create_bar_graph()),
 
-    dcc.Input(style={"margin-left": "15px"})
 ])
 
 @app.callback(
     Output('model-differences', 'figure')
+    Input('toggle-button', 'n_clicks')
 )
 def toggle_models(n_clicks):
     global selected_model
