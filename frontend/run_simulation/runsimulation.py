@@ -8,7 +8,7 @@ external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-image_path = "C:/Users/Yan Zhang/OneDrive - National University of Singapore/Desktop/libraryfrontend/CSV.png"
+image_path = r"data/CSV.png"
 
 with open(image_path, "rb") as image_file:
     encoded_image = base64.b64encode(image_file.read()).decode()
@@ -22,7 +22,9 @@ rs_layout = html.Div([
         html.H3("Choose Submission", style={'color': 'navy', 'font-size': '18px'}),
         dcc.Dropdown(
             options=[
-                {'label': 'dummy submission', 'value': 'option1'},
+                {'label': 'Submission 1', 'value': 'option1'},
+                {'label': 'Submission 2', 'value': 'option2'},
+                {'label': 'Submission 3', 'value': 'option3'},
             ],
             style={'width': '150px', 'margin': 'auto'},
         ),
