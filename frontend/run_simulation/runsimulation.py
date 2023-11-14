@@ -8,7 +8,7 @@ external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-image_path = "C:/Users/Yan Zhang/OneDrive - National University of Singapore/Desktop/libraryfrontend/CSV.png"
+image_path = r"data/CSV.png"
 
 with open(image_path, "rb") as image_file:
     encoded_image = base64.b64encode(image_file.read()).decode()
@@ -21,8 +21,11 @@ rs_layout = html.Div([
     html.Div([
         html.H3("Choose Submission", style={'color': 'navy', 'font-size': '18px'}),
         dcc.Dropdown(
+            id='submission-dropdown',
             options=[
-                {'label': 'dummy submission', 'value': 'option1'},
+                {'label': 'Submission 1', 'value': 'option1'},
+                {'label': 'Submission 2', 'value': 'option2'},
+                {'label': 'Submission 3', 'value': 'option3'},
             ],
             style={'width': '150px', 'margin': 'auto'},
         ),
@@ -67,6 +70,21 @@ rs_layout = html.Div([
 ], className="feature-container", style={'text-align': 'center', 'padding-top': '50px'})
 
 app.layout = rs_layout
+
+# @app.callback(
+#     Output('submission-dropdown', 'value'),
+#     Input('submission-dropdown', 'value')
+# )
+# def update_selected_submission(selected_submission):
+#     global selected_submission_file_path
+#     if selected_submission == 'option1':
+#         selected_submission_file_path = r"data/seat arrangement/random submission.json"
+#     if selected_submission == 'option2':
+#         selected_submission_file_path = r"data/seat arrangement/random submission2.json"
+#     if selected_submission == 'option3':
+#         selected_submission_file_path = r"data/seat arrangement/random submission3.json"
+#     # Add similar conditions for other options if needed
+#     return selected_submission
 
 # @app.callback(Output('output-data-upload', 'children'),
 #               Input('upload-data', 'contents'))
