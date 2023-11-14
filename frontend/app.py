@@ -185,6 +185,51 @@ def confirm_submission(n_clicks, filename):
         json.dump(output, f, indent=4)
     return '/run_simulation', True, False
 
+# Connecting APIs
+
+  @app.callback(
+    [Output('output-data-upload', 'children'),
+     Output('some-other-output', 'children')],  # Add any other relevant outputs
+    [Input('submit-button', 'n_clicks')],
+    [State('filename-input', 'value'),  # Assuming you have an input for the filename
+     State('data', 'data')]  # Assuming you have a component storing data in the app layout
+)
+
+def submit_inputs(n_clicks, filename, data):
+    if n_clicks is None:
+        raise PreventUpdate
+
+    if not filename:
+        return html.Label("Please provide a submission name."), None
+
+    submission_data = {
+        "submission_name": filename,
+        "levels": []
+    }
+
+    for level in data:
+        level_data = {
+            "level": level,
+            "sections": [{"seat_type": seat["Seat Type"], "count": seat["Count"]} for seat in data[level]]
+        }
+        submission_data["levels"].append(level_data)
+
+    submission_json = json.dumps(submission_data)
+
+    upload_url = 'http://127.0.0.1:5000/upload'
+
+    files = {
+        'json': ('submission.json', submission_json),
+    }
+
+    response = requests.post(upload_url, params={'exam_period': 'False'}, files=files)
+
+    if response.status_code == 200:
+        result = response.json()
+        return html.Label(f'Files processed successfully. Result JSON file: {result["result_json"]}'), None
+    else:
+        return html.Label(f'Error: {response.status_code}. {response.json()}'), None
+
 # Callbacks for past_simulations_page ------------------------------------------------------------------------------------------------------------------------------
 # Add a callback to show the delete modal when a delete button is clicked
 @app.callback(
@@ -256,6 +301,36 @@ def update_output(list_of_contents):
         content = list_of_contents[0]
         return content
 
+
+# Connecting APIs
+upload_url = 'http://127.0.0.1:5000/upload'
+
+@app.callback(
+    Output('some-other-output-component', 'children'),  # Change the output component
+    Input('upload-data', 'contents'),
+    prevent_initial_call=True
+)
+def update_output2(list_of_contents):
+    if list_of_contents is None:
+        raise PreventUpdate
+
+    content = list_of_contents[0]
+
+    files = {
+        'json': ('submission.json', content),
+    }
+    response = requests.post(upload_url, params={'exam_period': 'False'}, files=files)
+
+    if response.status_code == 200:
+        result = response.json()
+        message = f'Files processed successfully. Result JSON file: {result["result_json"]}'
+    else:
+        message = f'Error: {response.status_code}\n{response.json()}'
+
+    return html.Div(message)
+
+
+
 # Callbacks for simulation_page.py -----------------------------------------------------------------------------------------------------------------------------
 # Create callback functions for the "Full Graph" buttons for each level
 for level in sp.levels:
@@ -288,7 +363,37 @@ def update_content(tab):
         return sp.tab1_content
     else:
         return sp.tab_oo_layout
-    
+
+# Connecting APIs
+@app.callback(
+    [Output('tab-content', 'children'),
+     Output('some-other-output-3', 'children')],
+    [Input('tabs', 'value'),
+     Input('run-simulation-button', 'n_clicks')],
+    prevent_initial_call=True
+)
+def update_tab_and_output(tab, n_clicks):
+    if n_clicks is None:
+        raise PreventUpdate
+
+    if tab == 'tab-1':
+        return [sp.level_layouts[level] for level in sp.levels], None
+    else:
+        results_url2 = 'http://127.0.0.1:5000/download'
+
+        # Make a GET request to the API
+        response = requests.get(results_url2)
+
+        if response.status_code == 200:
+            result = response.json()
+
+            return [
+                sp.tab_oo_layout,
+                html.Div(f"Result CSV file: {result['result_csv']}", style={'color': 'navy', 'font-size': '18px'}),
+                html.Div(f"Result JSON file: {result['result_json']}", style={'color': 'navy', 'font-size': '18px'})
+            ], None
+        else:
+            return [html.Div(f"Error: {response.status_code}\n{response.json()}", style={'color': 'red', 'font-size': '18px'})], None
     
 # Callback for comparison page --------------------------------------------------------------------------------------------------------------------------------------
 
