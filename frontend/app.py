@@ -300,7 +300,21 @@ def update_output(list_of_contents):
     if list_of_contents is not None:
         content = list_of_contents[0]
         return content
-
+      
+@app.callback(
+    Output('submission-dropdown', 'value'),
+    Input('submission-dropdown', 'value')
+)
+def update_selected_submission(selected_submission):
+    global selected_submission_file_path
+    if selected_submission == 'option1':
+        selected_submission_file_path = r"data/seat arrangement/random submission.json"
+    if selected_submission == 'option2':
+        selected_submission_file_path = r"data/seat arrangement/random submission2.json"
+    if selected_submission == 'option3':
+        selected_submission_file_path = r"data/seat arrangement/random submission3.json"
+    # Add similar conditions for other options if needed
+    return selected_submission
 
 # Connecting APIs
 upload_url = 'http://127.0.0.1:5000/upload'
