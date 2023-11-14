@@ -87,4 +87,4 @@ def toggle_models(n_clicks):
     return fig, button_text
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
