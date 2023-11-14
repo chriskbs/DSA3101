@@ -23,33 +23,46 @@ def test():
     print('zuccess')
     return '200'
 
-@app.route('/upload', methods=['POST'])
-def upload_files():
-    # Check if the POST request has the file part
-    if 'json' not in request.files or 'csv' not in request.files:
-        return jsonify({'error': 'Missing files'}), 400
+@app.route('/upload', methods=['POST'], defaults={'exam_period':'False', 'num_runs':1})
+def upload_files(exam_period, num_runs):
+    # Check if the POST request has the .json file part
+    if 'json' not in request.files:
+        return jsonify({'error': 'Missing .json file'}), 400
+    else:
+        json_file = request.files['json']
     
-    exam_period = request.args['exam_period'] == 'False'
-    json_file = request.files['json']
-    csv_file = request.files['csv']
+    # TODO: Use num_runs to do number of batch runs
+    # Exam period
+    exam_period = exam_period == 'False'
+
 
     # Check if the files have the allowed extensions
-    if json_file and allowed_file(json_file.filename) and csv_file and allowed_file(csv_file.filename):
+    if json_file and allowed_file(json_file.filename):
         # Save the files to the upload folder
         json_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'input.json')
         csv_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'input.csv')
 
+        # check if the POST request has .csv file, else proceed with default file
+        if 'csv' not in request.files:
+            if exam_period:
+                csv_data = pd.read_csv('data/dummy_exam_period.csv')
+            else:
+                csv_data = pd.read_csv('data/dummy_normal_period.csv')
+        else: 
+            csv_file = request.files['csv']
+            if not allowed_file(csv_file.filename):
+                return jsonify({'error': '.csv file is not in the right format'}), 400
+            csv_file.save(csv_filename)
+            csv_data = pd.read_csv(csv_filename)
+
         json_file.save(json_filename)
-        csv_file.save(csv_filename)
 
         # Process the files (example: concatenate the dataframes)
         json_data = json.load(open(json_filename))
-        csv_data = pd.read_csv(csv_filename)
 
         submission_name = json_data['submission_name']
 
         result_df, sections_df = run_simulation(csv_data, json_data, exam_period=exam_period)
-        # TODO: output json file
         result_json = {
             'name': json_data['submission_name'],
             'score': compute_avg_score(sections_df, 'overall'),
@@ -88,5 +101,5 @@ def download_file(filename):
     else:
         return jsonify({'error': 'File not found'}), 404
 
-# if __name__ == '__main__':
-#     app.run(host= '0.0.0.0',debug=True)
+if __name__ == '__main__':
+    app.run(host= '0.0.0.0',debug=True)
