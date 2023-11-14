@@ -1,9 +1,9 @@
 import dash
-from dash import dcc, html, Input, Output
+from dash import dcc, html #, Input, Output
 import base64
-import requests
-from io import BytesIO
-
+# import requests
+# from io import BytesIO
+import os 
 external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -13,37 +13,49 @@ image_path = r"data/CSV.png"
 with open(image_path, "rb") as image_file:
     encoded_image = base64.b64encode(image_file.read()).decode()
 
-rs_layout = html.Div([
-    html.Div([
+json_files_path = r"data/seat arrangement"
+csv_files_path = r"data/period"
+def get_json_filenames(directory):
+    return [{'label': os.path.splitext(filename)[0], 'value': filename} 
+            for filename in os.listdir(directory) 
+            if filename.endswith(".json")]
+
+home = html.Div([
         html.A(html.Button("Home", className="home-btn", id="home-button"), href="/"),
-    ], style={'position': 'absolute', 'top': '20px', 'left': '20px'}),  
+    ], style={'position': 'absolute', 'top': '20px', 'left': '20px'})
 
-    html.Div([
-        html.H3("Choose Submission", style={'color': 'navy', 'font-size': '18px'}),
-        dcc.Dropdown(
-            id='submission-dropdown',
+seat_arrangement_dp = dcc.Dropdown(
+    id='submission-dropdown',
+    options=get_json_filenames(json_files_path),
+    style={'width': '250px', 'margin': 'auto'},
+    value='random submission.json'
+)
+
+seat_arrangement_div = html.Div([
+    html.H3("Choose Submission", style={'color': 'navy', 'font-size': '18px'}),
+    seat_arrangement_dp,
+    html.I(className="fas fa-caret-down", style={'color': 'navy', 'font-size': '18px', 'margin-top': '10px'})
+], className="feature")
+
+period_dp = dcc.Dropdown(
+            id='period-dropdown',
             options=[
-                {'label': 'Submission 1', 'value': 'option1'},
-                {'label': 'Submission 2', 'value': 'option2'},
-                {'label': 'Submission 3', 'value': 'option3'},
+                {'label': 'Normal Period', 'value': 'normal.csv'},
+                {'label': 'Exam Period', 'value': 'exam.csv'},
+                {'label': 'Event Period', 'value': 'event.csv'},
             ],
-            style={'width': '150px', 'margin': 'auto'},
-        ),
-        html.I(className="fas fa-caret-down", style={'color': 'navy', 'font-size': '18px', 'margin-top': '10px'})
-    ], className="feature"),
+            style={'width': '250px', 'margin': 'auto'},
+        )
 
-    html.Div([
+period_div = html.Div([
         html.H3("Choose Period", style={'color': 'navy', 'font-size': '18px'}),
-        dcc.Dropdown(
-            options=[
-                {'label': 'Normal Period', 'value': 'normal'},
-                {'label': 'Exam Period', 'value': 'exam'},
-                {'label': 'Event Period', 'value': 'event'},
-            ],
-            style={'width': '150px', 'margin': 'auto'},
-        ),
-    ], className="feature"),
+        period_dp
+    ], className="feature")
 
+rs_layout = html.Div([
+    home,
+    seat_arrangement_div,
+    period_div,
     html.Div("OR", style={'color': 'navy', 'font-size': '20px', 'margin-top': '20px'}),
 
     html.Div([
@@ -63,7 +75,7 @@ rs_layout = html.Div([
     ], className="feature"),
 
     html.Div([
-        html.Button("Run Simulation", className="btn-run", style={'margin-top': '30px', 'font-size': '18px', 'margin-bottom': '30px'})
+        html.Button("Run Simulation", id="run_sim", className="btn-run", style={'margin-top': '30px', 'font-size': '18px', 'margin-bottom': '30px'})
     ], className="feature"),
     
     html.Div(id='output-data-upload'),

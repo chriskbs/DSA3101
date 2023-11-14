@@ -6,6 +6,8 @@ import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, ctx, dcc, dash_table
 from dash.dependencies import Input, Output, State 
 from datetime import datetime 
+import requests
+import pandas as pd
 
 import input_page.input_page as ip
 import home_page.home_page as hp
@@ -82,7 +84,7 @@ def update_level():
             back_button = True
     return next_button, back_button, submit_button
 
-title = "Level 3"
+title = ip.title
 @app.callback(
     Output("title", "children"),
     [Output(f'count-text-{seat_type}', 'value', allow_duplicate=True) for seat_type in ip.seat_types_ip],
@@ -100,7 +102,6 @@ title = "Level 3"
 def update_title(n_clicks, n_clicks2):
     output = []
     global title
-    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     next_button, back_button, submit_button = update_level()
     output.append(title)
     for seat_type in ip.seat_types_ip:
@@ -187,48 +188,63 @@ def confirm_submission(n_clicks, filename):
 
 # Connecting APIs
 
-  @app.callback(
-    [Output('output-data-upload', 'children'),
-     Output('some-other-output', 'children')],  # Add any other relevant outputs
-    [Input('submit-button', 'n_clicks')],
-    [State('filename-input', 'value'),  # Assuming you have an input for the filename
-     State('data', 'data')]  # Assuming you have a component storing data in the app layout
+@app.callback(
+    Output('url', 'pathname', allow_duplicate=True),
+    Input('run_sim', 'n_clicks'),
+    Input('submission-dropdown', 'value'),
+    Input('period-dropdown', 'value'),
+    Input('upload-data', 'contents'),
+    prevent_initial_call=True
 )
 
-def submit_inputs(n_clicks, filename, data):
-    if n_clicks is None:
-        raise PreventUpdate
+def submit_inputs(n_clicks, seat_arrangement_file, period_file, uploaded_file):
+    print(n_clicks)
+    if not n_clicks:
+        return dash.no_update
+    seat_arrangement_file_path = os.path.join(rs.json_files_path, seat_arrangement_file)
+    if period_file:
+        period_file_path = os.path.join(rs.csv_files_path, period_file)
+    elif uploaded_file:
+        content_type, content_string = uploaded_file.split(',')
+        decoded = base64.b64decode(content_string)
+        period_file_path = os.path.join(rs.json_files_path, 'custom_period.csv')
+        with open(period_file_path, 'wb') as file:
+            file.write(decoded)
+    else:
+        return dash.no_update
 
-    if not filename:
-        return html.Label("Please provide a submission name."), None
-
-    submission_data = {
-        "submission_name": filename,
-        "levels": []
-    }
-
-    for level in data:
-        level_data = {
-            "level": level,
-            "sections": [{"seat_type": seat["Seat Type"], "count": seat["Count"]} for seat in data[level]]
-        }
-        submission_data["levels"].append(level_data)
-
-    submission_json = json.dumps(submission_data)
-
-    upload_url = 'http://127.0.0.1:5000/upload'
-
+    upload_url = 'http://server-container:5000/upload'
+    download_url = 'http://server-container:5000/download'
     files = {
-        'json': ('submission.json', submission_json),
+        'json': ('submission.json', open(seat_arrangement_file_path, 'rb')),
+        'csv': ('entries.csv', open(period_file_path, 'rb'))
     }
-
+    download_csv_path = r"data/simulation csv"
+    download_json_path = r"data/simulation json"
+    os.makedirs(download_csv_path, exist_ok=True)
+    os.makedirs(download_json_path, exist_ok=True)
+    simulation_file_name = os.path.splitext(seat_arrangement_file)[0] + '@' + os.path.splitext(period_file)[0]
     response = requests.post(upload_url, params={'exam_period': 'False'}, files=files)
-
+    print(response.status_code)
+    print(response)
     if response.status_code == 200:
         result = response.json()
-        return html.Label(f'Files processed successfully. Result JSON file: {result["result_json"]}'), None
+        result_csv = result['result_csv']
+        result_json = result['result_json']
+        download_csv = requests.get(download_url + "/" + result_csv)
+        download_json = requests.get(download_url + "/" + result_json)
+        if download_csv.status_code == 200 and download_json.status_code == 200:
+            with open(os.path.join(download_csv_path, f"{simulation_file_name}.csv"), 'wb') as file:
+                file.write(download_csv.content)
+            with open(os.path.join(download_json_path, f"{simulation_file_name}.json"), 'wb') as file:
+                file.write(download_json.content)
+            data = pd.read_csv(os.path.join(download_csv_path, f"{simulation_file_name}.csv"))
+            levels = list(data['level'].unique()) # identifying the levels that users have chosen to simulate
+            # sp.level_layouts = sp.create_level_layout(level, data)
+        return '/simulation_page'
     else:
-        return html.Label(f'Error: {response.status_code}. {response.json()}'), None
+        print(f'Error: {response.status_code}\n{response.json()}')
+        return dash.no_update
 
 # Callbacks for past_simulations_page ------------------------------------------------------------------------------------------------------------------------------
 # Add a callback to show the delete modal when a delete button is clicked
@@ -294,54 +310,55 @@ def delete_rows(*args):
     return output
 
 # callback for run_simulation page----------------------------------------------------------------------------------------------------------------------------
-@app.callback(Output('output-data-upload', 'children'),
-              Input('upload-data', 'contents'))
+@app.callback(Output('output-data-upload', 'children', allow_duplicate=True),
+              Input('upload-data', 'contents'),
+              prevent_initial_call=True)
 def update_output(list_of_contents):
     if list_of_contents is not None:
         content = list_of_contents[0]
         return content
       
-@app.callback(
-    Output('submission-dropdown', 'value'),
-    Input('submission-dropdown', 'value')
-)
-def update_selected_submission(selected_submission):
-    global selected_submission_file_path
-    if selected_submission == 'option1':
-        selected_submission_file_path = r"data/seat arrangement/random submission.json"
-    if selected_submission == 'option2':
-        selected_submission_file_path = r"data/seat arrangement/random submission2.json"
-    if selected_submission == 'option3':
-        selected_submission_file_path = r"data/seat arrangement/random submission3.json"
-    # Add similar conditions for other options if needed
-    return selected_submission
+# @app.callback(
+#     Output('submission-dropdown', 'value'),
+#     Input('submission-dropdown', 'value')
+# )
+# def update_selected_submission(selected_submission):
+#     global selected_submission_file_path
+#     if selected_submission == 'option1':
+#         selected_submission_file_path = r"data/seat arrangement/random submission.json"
+#     if selected_submission == 'option2':
+#         selected_submission_file_path = r"data/seat arrangement/random submission2.json"
+#     if selected_submission == 'option3':
+#         selected_submission_file_path = r"data/seat arrangement/random submission3.json"
+#     # Add similar conditions for other options if needed
+#     return selected_submission
 
 # Connecting APIs
 upload_url = 'http://127.0.0.1:5000/upload'
 
-@app.callback(
-    Output('some-other-output-component', 'children'),  # Change the output component
-    Input('upload-data', 'contents'),
-    prevent_initial_call=True
-)
-def update_output2(list_of_contents):
-    if list_of_contents is None:
-        raise PreventUpdate
+# @app.callback(
+#     Output('some-other-output-component', 'children'),  # Change the output component
+#     Input('upload-data', 'contents'),
+#     prevent_initial_call=True
+# )
+# def update_output2(list_of_contents):
+#     if list_of_contents is None:
+#         raise PreventUpdate
 
-    content = list_of_contents[0]
+#     content = list_of_contents[0]
 
-    files = {
-        'json': ('submission.json', content),
-    }
-    response = requests.post(upload_url, params={'exam_period': 'False'}, files=files)
+#     files = {
+#         'json': ('submission.json', content),
+#     }
+#     response = requests.post(upload_url, params={'exam_period': 'False'}, files=files)
 
-    if response.status_code == 200:
-        result = response.json()
-        message = f'Files processed successfully. Result JSON file: {result["result_json"]}'
-    else:
-        message = f'Error: {response.status_code}\n{response.json()}'
+#     if response.status_code == 200:
+#         result = response.json()
+#         message = f'Files processed successfully. Result JSON file: {result["result_json"]}'
+#     else:
+#         message = f'Error: {response.status_code}\n{response.json()}'
 
-    return html.Div(message)
+#     return html.Div(message)
 
 
 
@@ -368,9 +385,9 @@ def update_output(value):
     return [sp.level_layouts[level] for level in sp.levels]
 
 @app.callback(
-    Output('tab-content', 'children'),
-    Input('tabs', 'value')
-)
+    Output('tab-content', 'children', allow_duplicate=True),
+    Input('tabs', 'value'),
+    prevent_initial_call=True)
 def update_content(tab):
     if tab == 'tab-1':
         # return [sp.level_layouts[level] for level in sp.levels]
@@ -378,9 +395,10 @@ def update_content(tab):
     else:
         return sp.tab_oo_layout
 
+
 # Connecting APIs
 @app.callback(
-    [Output('tab-content', 'children'),
+    [Output('tab-content', 'children', allow_duplicate=True),
      Output('some-other-output-3', 'children')],
     [Input('tabs', 'value'),
      Input('run-simulation-button', 'n_clicks')],
@@ -392,22 +410,6 @@ def update_tab_and_output(tab, n_clicks):
 
     if tab == 'tab-1':
         return [sp.level_layouts[level] for level in sp.levels], None
-    else:
-        results_url2 = 'http://127.0.0.1:5000/download'
-
-        # Make a GET request to the API
-        response = requests.get(results_url2)
-
-        if response.status_code == 200:
-            result = response.json()
-
-            return [
-                sp.tab_oo_layout,
-                html.Div(f"Result CSV file: {result['result_csv']}", style={'color': 'navy', 'font-size': '18px'}),
-                html.Div(f"Result JSON file: {result['result_json']}", style={'color': 'navy', 'font-size': '18px'})
-            ], None
-        else:
-            return [html.Div(f"Error: {response.status_code}\n{response.json()}", style={'color': 'red', 'font-size': '18px'})], None
     
 # Callback for comparison page --------------------------------------------------------------------------------------------------------------------------------------
 
@@ -432,4 +434,4 @@ def display_page(pathname):
 
     
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', debug=False)
+    app.run_server(host='0.0.0.0', debug=True)
