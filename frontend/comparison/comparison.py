@@ -51,23 +51,27 @@ def create_bar_graph():
     return fig
 
 app.layout = html.Div([
-    html.H1("Model Comparison"),
-    html.Table([
-        html.Tr([html.Th("Criterion"), html.Th("Model 2"), html.Th("Model 3"), html.Th("Difference")]),
-    ] + [
-        html.Tr([html.Td(criterion), html.Td(model_2[criterion]), html.Td(model_3[criterion]), html.Td(differences[criterion])])
-        for criterion in criteria
-    ]),
-    # Button to toggle between models
-    html.Button("Toggle Model", id="toggle-button"),
+    html.Div([
+        html.A(html.Button("Home", className="home-btn", id="home-button"), href="/"),
+    ], style={'position': 'absolute', 'top': '20px', 'left': '20px'}), 
 
-    # Bar graph
-    dcc.Graph(id='model-differences', figure= create_bar_graph()),
-])
+    html.Div([
+        html.H1("Model Comparison"),
+        html.Table([
+            html.Tr([html.Th("Criterion"), html.Th("Model 2"), html.Th("Model 3"), html.Th("Difference")]),
+            ] + [
+                html.Tr([html.Td(criterion), html.Td(model_2[criterion]), html.Td(model_3[criterion]), html.Td(differences[criterion])])
+                for criterion in criteria
+                ]),
+                # Button to toggle between models
+                html.Button("Toggle Model", id="toggle-button"),
+                # Bar graph
+                dcc.Graph(id='model-differences', figure= create_bar_graph())], style={'width': '1200px', 'margin': '0 auto'}) 
+                ])
 
 @app.callback(
     Output('model-differences', 'figure'),
-    Input('toggle-button', "n_clicks")
+    Input('toggle-button', 'n_clicks')
 )
 def toggle_models(n_clicks):
     global selected_model

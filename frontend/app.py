@@ -2,6 +2,7 @@ import os
 import csv
 import json
 import dash
+import requests
 import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, ctx, dcc, dash_table
 from dash.dependencies import Input, Output, State 
@@ -15,10 +16,13 @@ import past_simulations_page.past_simulations_page as psp
 import run_simulation.runsimulation as rs 
 import simulation_page.simulation_page as sp 
 import loading_page.loading as load
+import comparison.comparison as compare
 
 inputs_directory = r'data/seat arrangement/'
 
 app = dash.Dash(__name__, suppress_callback_exceptions = True, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+app.config['prevent_initial_callbacks'] = 'initial_duplicate'
 
 app.layout = html.Div(children = [dcc.Location(id = "url", refresh = False),
                                        html.Div(id = "output-div")
@@ -336,6 +340,7 @@ def update_output(list_of_contents):
 # Connecting APIs
 upload_url = 'http://127.0.0.1:5000/upload'
 
+
 # @app.callback(
 #     Output('some-other-output-component', 'children'),  # Change the output component
 #     Input('upload-data', 'contents'),
@@ -406,13 +411,28 @@ def update_content(tab):
 )
 def update_tab_and_output(tab, n_clicks):
     if n_clicks is None:
-        raise PreventUpdate
+        raise dash.exceptions.PreventUpdate
 
     if tab == 'tab-1':
         return [sp.level_layouts[level] for level in sp.levels], None
     
 # Callback for comparison page --------------------------------------------------------------------------------------------------------------------------------------
+@app.callback(
+    Output('model-differences', 'figure'),
+    Input('toggle-button', 'n_clicks')
+)
+def toggle_models(n_clicks):
+    global selected_model
+    if n_clicks and n_clicks % 2 == 0:
+        selected_model = compare.model_2
+        button_text = "Toggle to Model 3"
+    else:
+        selected_model = compare.model_3
+        button_text = "Toggle to Model 2"
 
+    fig = compare.create_bar_graph()
+
+    return fig, button_text
 
 # Callback for homepage ----------------------------------------------------------------------------------------------------------------------------------------------------
 @app.callback(Output('output-div', 'children'), Input('url', 'pathname'))
@@ -426,7 +446,7 @@ def display_page(pathname):
     if pathname == '/simulation_page':
         return sp.sp_layout
     if pathname == '/compare':
-        return html.H1("Working in progress")
+        return compare.app.layout
     if pathname == '/loading_page':
         return load.load_layout
     else:
