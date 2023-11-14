@@ -2,6 +2,7 @@ import os
 import csv
 import json
 import dash
+import requests
 import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, ctx, dcc, dash_table
 from dash.dependencies import Input, Output, State 
@@ -13,10 +14,13 @@ import past_simulations_page.past_simulations_page as psp
 import run_simulation.runsimulation as rs 
 import simulation_page.simulation_page as sp 
 import loading_page.loading as load
+import comparison.comparison as compare
 
 inputs_directory = r'data/seat arrangement/'
 
 app = dash.Dash(__name__, suppress_callback_exceptions = True, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+app.config['prevent_initial_callbacks'] = 'initial_duplicate'
 
 app.layout = html.Div(children = [dcc.Location(id = "url", refresh = False),
                                        html.Div(id = "output-div")
@@ -187,8 +191,8 @@ def confirm_submission(n_clicks, filename):
 
 # Connecting APIs
 
-  @app.callback(
-    [Output('output-data-upload', 'children'),
+@app.callback(
+    [Output('output-data-upload', 'children', allow_duplicate = True),
      Output('some-other-output', 'children')],  # Add any other relevant outputs
     [Input('submit-button', 'n_clicks')],
     [State('filename-input', 'value'),  # Assuming you have an input for the filename
@@ -197,7 +201,7 @@ def confirm_submission(n_clicks, filename):
 
 def submit_inputs(n_clicks, filename, data):
     if n_clicks is None:
-        raise PreventUpdate
+        raise dash.exceptions.PreventUpdate
 
     if not filename:
         return html.Label("Please provide a submission name."), None
@@ -326,7 +330,7 @@ upload_url = 'http://127.0.0.1:5000/upload'
 )
 def update_output2(list_of_contents):
     if list_of_contents is None:
-        raise PreventUpdate
+        raise dash.exceptions.PreventUpdate
 
     content = list_of_contents[0]
 
@@ -368,7 +372,7 @@ def update_output(value):
     return [sp.level_layouts[level] for level in sp.levels]
 
 @app.callback(
-    Output('tab-content', 'children'),
+    Output('tab-content', 'children', allow_duplicate = True),
     Input('tabs', 'value')
 )
 def update_content(tab):
@@ -380,7 +384,7 @@ def update_content(tab):
 
 # Connecting APIs
 @app.callback(
-    [Output('tab-content', 'children'),
+    [Output('tab-content', 'children', allow_duplicate = True),
      Output('some-other-output-3', 'children')],
     [Input('tabs', 'value'),
      Input('run-simulation-button', 'n_clicks')],
@@ -388,7 +392,7 @@ def update_content(tab):
 )
 def update_tab_and_output(tab, n_clicks):
     if n_clicks is None:
-        raise PreventUpdate
+        raise dash.exceptions.PreventUpdate
 
     if tab == 'tab-1':
         return [sp.level_layouts[level] for level in sp.levels], None
@@ -410,7 +414,22 @@ def update_tab_and_output(tab, n_clicks):
             return [html.Div(f"Error: {response.status_code}\n{response.json()}", style={'color': 'red', 'font-size': '18px'})], None
     
 # Callback for comparison page --------------------------------------------------------------------------------------------------------------------------------------
+@app.callback(
+    Output('model-differences', 'figure'),
+    Input('toggle-button', 'n_clicks')
+)
+def toggle_models(n_clicks):
+    global selected_model
+    if n_clicks and n_clicks % 2 == 0:
+        selected_model = compare.model_2
+        button_text = "Toggle to Model 3"
+    else:
+        selected_model = compare.model_3
+        button_text = "Toggle to Model 2"
 
+    fig = compare.create_bar_graph()
+
+    return fig, button_text
 
 # Callback for homepage ----------------------------------------------------------------------------------------------------------------------------------------------------
 @app.callback(Output('output-div', 'children'), Input('url', 'pathname'))
@@ -424,7 +443,7 @@ def display_page(pathname):
     if pathname == '/simulation_page':
         return sp.sp_layout
     if pathname == '/compare':
-        return html.H1("Working in progress")
+        return compare.app.layout
     if pathname == '/loading_page':
         return load.load_layout
     else:
