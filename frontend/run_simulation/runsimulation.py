@@ -34,7 +34,7 @@ seat_arrangement_div = html.Div([
     html.H3("Choose Submission", style={'color': 'navy', 'font-size': '18px'}),
     seat_arrangement_dp,
     html.I(children='↓', style={'color': 'navy', 'font-size': '30px', 'margin-top': '10px'})
-    ], className="feature"),
+    ], className="feature")
 
 
 period_dp = dcc.Dropdown(
