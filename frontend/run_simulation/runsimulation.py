@@ -4,9 +4,8 @@ import base64
 # import requests
 # from io import BytesIO
 import os 
-external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__)
 
 image_path = r"data/CSV.png"
 
@@ -34,8 +33,9 @@ seat_arrangement_dp = dcc.Dropdown(
 seat_arrangement_div = html.Div([
     html.H3("Choose Submission", style={'color': 'navy', 'font-size': '18px'}),
     seat_arrangement_dp,
-    html.I(className="fas fa-caret-down", style={'color': 'navy', 'font-size': '18px', 'margin-top': '10px'})
-], className="feature")
+    html.I(children='↓', style={'color': 'navy', 'font-size': '30px', 'margin-top': '10px'})
+    ], className="feature"),
+
 
 period_dp = dcc.Dropdown(
             id='period-dropdown',
@@ -71,7 +71,7 @@ rs_layout = html.Div([
         ),
     ], className="feature"),
     html.Div([
-        html.I(className="fas fa-caret-down", style={'color': 'navy', 'font-size': '18px', 'margin-top': '20px'}),
+        html.I(children='↓', style={'color': 'navy', 'font-size': '30px', 'margin-top': '20px'}),
     ], className="feature"),
 
     html.Div([

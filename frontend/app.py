@@ -2,6 +2,7 @@ import os
 import csv
 import json
 import dash
+import base64
 import requests
 import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, ctx, dcc, dash_table
@@ -247,6 +248,7 @@ def submit_inputs(n_clicks, seat_arrangement_file, period_file, uploaded_file):
     else:
         print(f'Error: {response.status_code}\n{response.json()}')
         return dash.no_update
+    
 
 # Callbacks for past_simulations_page ------------------------------------------------------------------------------------------------------------------------------
 # Add a callback to show the delete modal when a delete button is clicked
@@ -388,7 +390,7 @@ for level in sp.levels:
         if n1:
             return {"display": "block"}, not is_open
         return {"display": "none"}, is_open
-
+    
 # added this callback 
 @app.callback(
     Output('slider-output-container', 'children'),
@@ -404,11 +406,9 @@ def update_output(value):
     prevent_initial_call=True)
 def update_content(tab):
     if tab == 'tab-1':
-        # return [sp.level_layouts[level] for level in sp.levels]
         return sp.tab1_content
     else:
         return sp.tab_oo_layout
-
 
 # # Connecting APIs
 # @app.callback(
@@ -463,4 +463,4 @@ def display_page(pathname):
 
     
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', debug=True)
+    app.run_server(host='0.0.0.0', debug=False)

@@ -9,13 +9,21 @@ import plotly.graph_objs as go
 import os
 import numpy as np
 import requests
+import sys
+app_dir_path = os.path.dirname(__file__)
+sys.path.append(app_dir_path)
 
-# Initializing the app
-# app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'dummy_data','trial_data_1lvl.csv'))
+# data = app.state['simulation_data']
 levels = list(data['level'].unique()) # identifying the levels that users have chosen to simulate
-# data = pd.read_csv("simulation_page/dummy_data/trial_data_1lvl.csv")
+timestamps_column = data['timestamp']
+timestamps_column = pd.to_datetime(timestamps_column)
+timestamps_column = timestamps_column.dt.time
+data['timestamp'] = timestamps_column
+current = datetime.strptime('10:20:00', '%H:%M:%S') # update 10:20:00 accordingly to slider value
+current_time = current.time()
+# print(data['timestamp'][1] == current_time)
 
 # If the user only inputs data for one level, the graph would occupy the whole screen else just half the screen
 if len(levels) == 1:
@@ -56,12 +64,6 @@ hour_map = {
 def create_level_layout(level, data):
     indexes_level = [index for index, value in enumerate(data['level']) if value == level]
     df_level = data.iloc[indexes_level].sort_values(by='section')
-    # if level == 'clb_6':
-    #     level = '6 CLB'
-    # elif level == 'wbs_6':
-    #     level = '6 Chinese Library'
-    # else:
-    #     level = level[-1]
     fig_level = px.bar(df_level, x='section', y='utilization_rate', title=f'Level {level}', color='utilization_rate',
                        color_discrete_sequence='rgb(77, 232, 232)',
                        text=df_level['utilization_rate'],
@@ -87,7 +89,6 @@ def create_level_layout(level, data):
 
 level_layouts = {level: create_level_layout(level, data) for level in levels}
 tab1_content = html.Div([
-    # dcc.Slider(0, 20, 5, id = 'my-slider'),
     dcc.Slider(
         id = 'my-slider',
         marks = hour_map,
@@ -95,7 +96,7 @@ tab1_content = html.Div([
         step = None
     ),
     html.Div(
-        id = 'slider-output-container' # my slider output should contain the graphs 
+        id = 'slider-output-container' # my-slider output should contain the graphs 
     )
 ])
 
