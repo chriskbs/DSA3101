@@ -25,9 +25,9 @@ app = dash.Dash(__name__, suppress_callback_exceptions = True, external_styleshe
 app.config['prevent_initial_callbacks'] = 'initial_duplicate'
 
 app.layout = html.Div(children = [dcc.Location(id = "url", refresh = False),
-                                       html.Div(id = "output-div")
+                                       html.Div(id = "output-div", children=[sp.sp_layout])
                                        ])
-
+simulation_csv_fname = os.path.join('simulation_page/dummy_data','trial_data_1lvl.csv')
 # callbacks for input page --------------------------------------------------------------------------------------------------------------------------------------------
 @app.callback(
     [Output(f'count-text-{seat_type}', 'value', allow_duplicate=True) for seat_type in ip.seat_types_ip],
@@ -242,9 +242,7 @@ def submit_inputs(n_clicks, seat_arrangement_file, period_file, uploaded_file):
                 file.write(download_csv.content)
             with open(os.path.join(download_json_path, f"{simulation_file_name}.json"), 'wb') as file:
                 file.write(download_json.content)
-            data = pd.read_csv(os.path.join(download_csv_path, f"{simulation_file_name}.csv"))
-            levels = list(data['level'].unique()) # identifying the levels that users have chosen to simulate
-            # sp.level_layouts = sp.create_level_layout(level, data)
+            simulation_csv_fname = os.path.join(download_csv_path, f"{simulation_file_name}.csv")
         return '/simulation_page'
     else:
         print(f'Error: {response.status_code}\n{response.json()}')
@@ -340,6 +338,16 @@ def update_output(list_of_contents):
 # Connecting APIs
 upload_url = 'http://127.0.0.1:5000/upload'
 
+@app.callback(
+    Output('slider-output-container', 'children', allow_duplicate=True),
+    [Input('url', 'pathname')],
+    prevent_initial_call=True
+)
+def update_output(pathname):
+    # Your logic for updating the layout when the app is loaded
+    data = pd.read_csv(simulation_csv_fname)
+    levels = list(data['level'].unique()) # identifying the levels that users have chosen to simulate
+    return [sp.level_layouts[level] for level in sp.levels]
 
 # @app.callback(
 #     Output('some-other-output-component', 'children'),  # Change the output component
@@ -387,6 +395,7 @@ for level in sp.levels:
     Input('my-slider', 'value')
 )
 def update_output(value):
+
     return [sp.level_layouts[level] for level in sp.levels]
 
 @app.callback(
@@ -401,20 +410,20 @@ def update_content(tab):
         return sp.tab_oo_layout
 
 
-# Connecting APIs
-@app.callback(
-    [Output('tab-content', 'children', allow_duplicate=True),
-     Output('some-other-output-3', 'children')],
-    [Input('tabs', 'value'),
-     Input('run-simulation-button', 'n_clicks')],
-    prevent_initial_call=True
-)
-def update_tab_and_output(tab, n_clicks):
-    if n_clicks is None:
-        raise dash.exceptions.PreventUpdate
+# # Connecting APIs
+# @app.callback(
+#     [Output('tab-content', 'children', allow_duplicate=True),
+#      Output('some-other-output-3', 'children')],
+#     [Input('tabs', 'value'),
+#      Input('run-simulation-button', 'n_clicks')],
+#     prevent_initial_call=True
+# )
+# def update_tab_and_output(tab, n_clicks):
+#     if n_clicks is None:
+#         raise dash.exceptions.PreventUpdate
 
-    if tab == 'tab-1':
-        return [sp.level_layouts[level] for level in sp.levels], None
+#     if tab == 'tab-1':
+#         return [sp.level_layouts[level] for level in sp.levels], None
     
 # Callback for comparison page --------------------------------------------------------------------------------------------------------------------------------------
 @app.callback(
