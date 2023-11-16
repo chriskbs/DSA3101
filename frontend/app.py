@@ -28,7 +28,7 @@ app.config['prevent_initial_callbacks'] = 'initial_duplicate'
 app.layout = html.Div(children = [dcc.Location(id = "url", refresh = False),
                                     html.Div(id = "output-div")
                                 ])
-simulation_csv_fname = os.path.join('simulation_page/dummy_data','trial_data_1lvl.csv')
+simulation_csv_fname = os.path.join('data/simulation csv','trial_data_1lvl.csv')
 
 # Callbacks for input page --------------------------------------------------------------------------------------------------------------------------------------------
 @app.callback(
