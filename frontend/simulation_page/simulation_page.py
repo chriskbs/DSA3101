@@ -1,29 +1,21 @@
-import dash
-import plotly.express as px
+import os
+import sys
+import dash 
+import random
+import numpy as np
 import pandas as pd
-import dash_bootstrap_components as dbc
+import plotly.express as px
+import plotly.graph_objs as go
+import dash_bootstrap_components as dbc 
+
 from dash import html, dcc, Input, Output, State
 from datetime import datetime, timedelta
-import random
-import plotly.graph_objs as go
-import os
-import numpy as np
-import requests
-import sys
-app_dir_path = os.path.dirname(__file__)
-sys.path.append(app_dir_path)
 
+current_directory = os.path.dirname(os.path.abspath(__file__))
+csv_path = os.path.join(current_directory, '..', 'data', 'simulation csv', 'trial_data_1lvl.csv')
+data = pd.read_csv(csv_path)
 
-data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'dummy_data','trial_data_1lvl.csv'))
-# data = app.state['simulation_data']
 levels = list(data['level'].unique()) # identifying the levels that users have chosen to simulate
-timestamps_column = data['timestamp']
-timestamps_column = pd.to_datetime(timestamps_column)
-timestamps_column = timestamps_column.dt.time
-data['timestamp'] = timestamps_column
-current = datetime.strptime('10:20:00', '%H:%M:%S') # update 10:20:00 accordingly to slider value
-current_time = current.time()
-# print(data['timestamp'][1] == current_time)
 
 # If the user only inputs data for one level, the graph would occupy the whole screen else just half the screen
 if len(levels) == 1:
@@ -33,6 +25,7 @@ else:
     x = "48%"
     y = "48%"
 
+# For the slider
 hour_map = {
     0: '00:00',
     1: '01:00',
@@ -61,6 +54,7 @@ hour_map = {
     25: '00:00',
 }
 
+# Bar Graphs for 'Overall Change in Occupancy'
 def create_level_layout(level, data):
     indexes_level = [index for index, value in enumerate(data['level']) if value == level]
     df_level = data.iloc[indexes_level].sort_values(by='section')
@@ -114,24 +108,6 @@ def generate_bell_curve(center, std_dev, length, floor_name):
 peak_times = [datetime(2023, 1, 1, 11, 0), datetime(2023, 1, 1, 10, 0), datetime(2023, 1, 1, 14, 0), datetime(2023, 1, 1, 16, 0)]
 std_deviation = 2  
 
-
-button_style = {'backgroundColor': 'black', 'color': 'white', 'borderRadius': '15px', 'margin': '5px'}
-tab_style = {'padding': '10px', 'background-color': '#003D7C', 'color':'white', 'fontWeight':'bold', 'fontSize':'20px'}
-# # The overall skeleton
-sp_layout = html.Div([
-    html.Button(dcc.Link("Home", href = '/', style = {'text-decoration':'none'}), 
-                id="button_home", n_clicks=0, style={'background-color': 'light grey', 'border-radius': '5px'}),
-    html.Button(dcc.Link(children=[html.Img(src='assets/close.png', style={'width': '17px', 'height': '17px'})], href = '/run_simulation', style = {'text-decoration':'none'}), 
-                id="button_close", n_clicks=0, style={'border-radius': '5px', 'float': 'right'}),
-    html.Div([
-        dcc.Tabs(id='tabs', value='tab-1', children=[
-            dcc.Tab(label='Overall Change in Occupancy', value='tab-1', style= tab_style),
-            dcc.Tab(label='Occupancy overtime', value='tab-2', style= tab_style)
-        ]),
-        html.Div(tab1_content, id='tab-content')
-    ])], style={'padding': '10px'})
-
-
 # Time series plot for 'Occupancy Overtime'
 traces = []
 
@@ -175,4 +151,20 @@ layout['xaxis']['tickformat'] = '%H:%M'
 tab_oo_layout = html.Div([
     dcc.Graph(figure={'data': traces, 'layout': layout}, id='tab-oo-layout'),
 ])
+
+# The overall skeleton
+button_style = {'backgroundColor': 'black', 'color': 'white', 'borderRadius': '15px', 'margin': '5px'}
+tab_style = {'padding': '10px', 'background-color': '#003D7C', 'color':'white', 'fontWeight':'bold', 'fontSize':'20px'}
+
+sp_layout = html.Div([
+    html.A(html.Button("Home", className="home-btn", id="home-button"), href="/"),
+    html.Button(dcc.Link(children=[html.Img(src=r'assets/close.png', style={'width': '17px', 'height': '17px'})], href = '/run_simulation', style = {'text-decoration':'none'}), 
+                id="button_close", n_clicks=0, style={'border-radius': '5px', 'float': 'right'}),
+    html.Div([
+        dcc.Tabs(id='tabs', value='tab-1', children=[
+            dcc.Tab(label='Overall Change in Occupancy', value='tab-1', style= tab_style),
+            dcc.Tab(label='Occupancy overtime', value='tab-2', style= tab_style)
+        ]),
+        html.Div(tab1_content, id='tab-content')
+    ])], style={'padding': '10px'})
 
