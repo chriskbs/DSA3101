@@ -228,6 +228,7 @@ def submit_inputs(n_clicks, seat_arrangement_file, period_file, uploaded_file):
                 file.write(download_csv.content)
             with open(os.path.join(download_json_path, f"{simulation_file_name}.json"), 'wb') as file:
                 file.write(download_json.content)
+            global simulation_csv_fname
             simulation_csv_fname = os.path.join(download_csv_path, f"{simulation_file_name}.csv")
         return '/simulation_page'
     else:
@@ -298,17 +299,7 @@ def delete_rows(*args):
     output.append(False)
     return output
 
-# Callback for run_simulation page----------------------------------------------------------------------------------------------------------------------------
-# 
-# @app.callback(Output('output-data-upload', 'children', allow_duplicate=True),
-#               Input('upload-data', 'contents'),
-#               prevent_initial_call=True)
-# def update_output(list_of_contents):
-#     if list_of_contents is not None:
-#         content = list_of_contents[0]
-#         return content
-
-# Update when a new file is uploaded
+# Update when a new file is uploaded -----------------------------------------------------------------------------------------------------------------------------
 # Update the simulation graphs
 @app.callback(
     Output('slider-output-container', 'children'),
