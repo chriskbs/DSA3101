@@ -1,3 +1,9 @@
+"""
+Installation of the following packages are required to run this script
+- pytest
+- requests
+- requests-mock
+"""
 import pytest
 import requests
 from unittest.mock import patch, MagicMock
@@ -54,5 +60,7 @@ def test_file_download(requests_mock):
     assert response.status_code == 200
     assert response.text == 'Test file content'
 
-    #test on terminal at the correct directory using
-    ## pytest flasktest.py
+    """
+    test on terminal at the correct directory using
+    pytest flasktest.py
+    """
