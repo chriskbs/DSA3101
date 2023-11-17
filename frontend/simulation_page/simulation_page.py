@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 current_directory = os.path.dirname(os.path.abspath(__file__))
 csv_path = os.path.join(current_directory, '..', 'data', 'simulation csv', 'trial_data_1lvl.csv')
 data = pd.read_csv(csv_path)
-
+data['timestamp'] = pd.to_datetime(data['timestamp'])
 levels = list(data['level'].unique()) # identifying the levels that users have chosen to simulate
 
 # If the user only inputs data for one level, the graph would occupy the whole screen else just half the screen
@@ -55,38 +55,64 @@ hour_map = {
 }
 
 # Bar Graphs for 'Overall Change in Occupancy'
-def create_level_layout(level, data):
-    indexes_level = [index for index, value in enumerate(data['level']) if value == level]
+# def create_level_layout(level, data):
+#     indexes_level = [index for index, value in enumerate(data['level']) if value == level]
+#     df_level = data.iloc[indexes_level].sort_values(by='section')
+#     fig_level = px.bar(df_level, x='section', y='utilization_rate', title=f'Level {level}', color='utilization_rate',
+#                        color_discrete_sequence='rgb(77, 232, 232)',
+#                        text=df_level['utilization_rate'],
+#                        hover_data={'utilization_rate': True})
+#     fig_level.update_traces(marker=dict(color='rgb(77, 232, 232)')) # To ensure that the graph color would be red and green
+#     fig_level.update_layout(hovermode='closest')
+
+#     # Create the layout for the given level
+#     tab_bp_layout_level = html.Div([
+#         dcc.Graph(id=f'Graph_{level}', figure=fig_level),
+#         dbc.Button(f"Full Graph (Level {level})", id=f"button_lvl{level}", n_clicks=0, style={'float': 'right', 'background-color': '#003D7C'}),
+#         html.Div(id=f"popup-content{level}", children=[
+#             dbc.Modal([
+#                 dbc.ModalHeader(f"Level {level}", style={'background-color': '#003D7C', 'font-size': '24px', 'font-weight': 'bold'}),
+#                 dbc.ModalBody([
+#                     dcc.Graph(id=f'Graph_{level}', figure=fig_level, style={'width': '100%', 'height': '100%'}),
+#                 ], style={'background-color': 'white'}),
+#             ], id=f"popup{level}", fullscreen=True, centered=True)
+#         ])
+#     ], style={'width': x, 'height': y, 'display': 'inline-block'})
+#     return tab_bp_layout_level
+
+def create_level_layout(level, hour, data):
+    indexes_level = [index for index, value in enumerate(data['level']) if value == level and data['timestamp'][index].hour == hour]
     df_level = data.iloc[indexes_level].sort_values(by='section')
-    fig_level = px.bar(df_level, x='section', y='utilization_rate', title=f'Level {level}', color='utilization_rate',
+    fig_level = px.bar(df_level, x='section', y='utilization_rate', title=f'Level {level} - Hour {hour}', color='utilization_rate',
                        color_discrete_sequence='rgb(77, 232, 232)',
                        text=df_level['utilization_rate'],
                        hover_data={'utilization_rate': True})
-    fig_level.update_traces(marker=dict(color='rgb(77, 232, 232)')) # To ensure that the graph color would be red and green
+    fig_level.update_traces(marker=dict(color='rgb(77, 232, 232)'))  # To ensure that the graph color would be red and green
     fig_level.update_layout(hovermode='closest')
 
-    # Create the layout for the given level
+    # Create the layout for the given level and hour
     tab_bp_layout_level = html.Div([
-        dcc.Graph(id=f'Graph_{level}', figure=fig_level),
-        dbc.Button(f"Full Graph (Level {level})", id=f"button_lvl{level}", n_clicks=0, style={'float': 'right', 'background-color': '#003D7C'}),
-        html.Div(id=f"popup-content{level}", children=[
+        dcc.Graph(id=f'Graph_{level}_hour_{hour}', figure=fig_level),
+        dbc.Button(f"Full Graph (Level {level} - Hour {hour})", id=f"button_lvl{level}_hour_{hour}", n_clicks=0,
+                   style={'float': 'right', 'background-color': '#003D7C'}),
+        html.Div(id=f"popup-content{level}_hour_{hour}", children=[
             dbc.Modal([
-                dbc.ModalHeader(f"Level {level}", style={'background-color': '#003D7C', 'font-size': '24px', 'font-weight': 'bold'}),
+                dbc.ModalHeader(f"Level {level} - Hour {hour}", style={'background-color': '#003D7C', 'font-size': '24px', 'font-weight': 'bold'}),
                 dbc.ModalBody([
-                    dcc.Graph(id=f'Graph_{level}', figure=fig_level, style={'width': '100%', 'height': '100%'}),
+                    dcc.Graph(id=f'Graph_{level}_hour_{hour}', figure=fig_level, style={'width': '100%', 'height': '100%'}),
                 ], style={'background-color': 'white'}),
-            ], id=f"popup{level}", fullscreen=True, centered=True)
+            ], id=f"popup{level}_hour_{hour}", fullscreen=True, centered=True)
         ])
     ], style={'width': x, 'height': y, 'display': 'inline-block'})
     return tab_bp_layout_level
 
 
-level_layouts = {level: create_level_layout(level, data) for level in levels}
+level_layouts = {level: create_level_layout(level, 9, data) for level in levels}
 tab1_content = html.Div([
     dcc.Slider(
         id = 'my-slider',
         marks = hour_map,
-        value = 0, 
+        value = 9, 
         step = None
     ),
     html.Div(

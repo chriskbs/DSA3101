@@ -110,6 +110,33 @@ def find_total_seats(level, data, seats):
         total_seats += find_seat_count(level, seat_type, data) * seats[seat_type]
     return total_seats
 
+def update_level(changed_id, _title):
+    next_button = False
+    back_button = False
+    submit_button = True
+    if changed_id == 'next-button.n_clicks':
+        if _title == "Level 3":
+            _title = "Level 4"
+        elif _title == "Level 4":
+            _title = "Level 5"
+        elif _title == "Level 5":
+            _title = "Level 6 Central Library"
+        elif _title == "Level 6 Central Library":
+            _title = "Level 6 Chinese Library"
+            next_button = True
+            submit_button = False
+    elif changed_id == 'back-button.n_clicks':
+        if _title == "Level 6 Chinese Library":
+            _title = "Level 6 Central Library"
+        elif _title == "Level 6 Central Library":
+            _title = "Level 5"
+        elif _title == "Level 5":
+            _title = "Level 4"
+        elif _title == "Level 4":
+            _title = "Level 3"
+            back_button = True
+    return next_button, back_button, submit_button, _title
+
 # Define a component to display the total count of each seat type
 table_balanced_seats = dash_table.DataTable(
     id='table_balanced_seats',
