@@ -12,14 +12,19 @@ data_directory = r"data/simulation json/"
 
 # app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
+# we need this to keep track of the names that were deleted
 static_simulation_names = []
+# add names inside the data directory that are not in the current list
+def add_json_filenames(current_list, directory):
+    for fname in os.listdir(directory):
+        if os.path.isfile(os.path.join(directory, fname)):
+            name, extension = os.path.splitext(fname)
+            if extension == '.json':
+                if name not in current_list:
+                    current_list.append(name)
+    return current_list
 
-for fname in os.listdir(data_directory):
-    if os.path.isfile(os.path.join(data_directory, fname)):
-        name, extension = os.path.splitext(fname)
-        if extension == '.json':
-            static_simulation_names.append(name)
-
+static_simulation_names = add_json_filenames(static_simulation_names, data_directory)
 simulation_names = static_simulation_names.copy()
       
 def create_dropdown(position="left"):
@@ -74,7 +79,19 @@ def simulation_scores(simulation_name):
     style={'display': 'inline-block', 'width': '100%', 'padding': '10px'})
     
     
-def create_row(simulation_name):
+def create_row(simulation_name, actual):
+    hidden = simulation_name not in actual
+    delete_button = html.Button(
+        children=[html.Img(src='assets/delete.svg', alt='Button Image', style={'width': '50px', 'height': '100px'})],
+        id=f'delete-button-{simulation_name}',
+        style={'width': '100%', 'height': '100%'}
+    )
+    if hidden:
+        return html.Div([delete_button],
+                    style={'vertical-align': 'middle'},
+                    id=f'row-{simulation_name}',
+                    hidden=hidden
+                )
     simulation = html.Div(
         children=[
             html.Div([
@@ -90,11 +107,6 @@ def create_row(simulation_name):
             ], style={'display': 'inline-block', 'width': '15%', 'vertical-align': 'middle', 'height': '100%'})
         ],
         style={'display': 'inline-block', 'width': '85%', 'margin': '0 auto', 'border': '1px solid black', 'vertical-align': 'middle'}
-    )
-    delete_button = html.Button(
-        children=[html.Img(src='assets/delete.svg', alt='Button Image', style={'width': '50px', 'height': '100px'})],
-        id=f'delete-button-{simulation_name}',
-        style={'width': '100%', 'height': '100%'}
     )
     new_row = html.Div(
         children=[
@@ -114,7 +126,7 @@ def create_row(simulation_name):
             html.Br()
         ],
         style={'vertical-align': 'middle'},
-        id=f'row-{simulation_name}'
+        id=f'row-{simulation_name}',
     )
     return new_row_with_Br
 
@@ -133,7 +145,8 @@ delete_modal = dbc.Modal(
 )
 
 past_simulations = html.Div(
-    children=[html.Hr()]+[create_row(simulation_name) for simulation_name in simulation_names],
+    id='past-simulations',
+    children=[html.Hr()]+[create_row(simulation_name, simulation_name) for simulation_name in simulation_names],
     style={'overflow': 'scroll', 'height': '90%', 'width': '100%'}
 )
 
