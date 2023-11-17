@@ -6,7 +6,7 @@
 An application to help library staff maximise seat occupancy and gain greater insights regarding user distribution across space and time, through the simulation of student behaviours.
 
 ## Model performance
-
+The model is created using survey data collected at the CLB library. The results could be found [here](https://docs.google.com/spreadsheets/d/1pkddLT0OnSZLDj2f-nxnOB72zRGDc_uW1BvoUZT0_yI/edit?usp=sharing).
 ## How to run
 1. Clone the repo
 ```
