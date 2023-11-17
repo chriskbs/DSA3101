@@ -1,9 +1,33 @@
-# DSA3101_library01
-Attempt to merge both repo together
 # dsa3101-2310-01-library
-Simulation and user dashboard to determine distribution and occupancy of library users
 
-Workflow:
+# Library Seating Occupancy Simulation
+
+## Introduction
+An application to help library staff maximise seat occupancy and gain greater insights regarding user distribution across space and time, through the simulation of student behaviours.
+
+## Model performance
+
+## How to run
+1. Clone the repo
+```
+git clone git@github.com:dsa3101-2310-01-library/dsa3101-2310-01-library.git
+```
+2. Ensure docker has been installed and running
+```
+docker info
+```
+3. Run docker compose
+```
+docker-compose up --build -d
+```
+4. Open a chrome or edge browser and go to `http://localhost:9002`
+
+## Snapshot of the application
+
+
+
+
+## How to contribute to this repo
 1. Fork the team repo (only need to do this once)
 2. Clone the forked repo (yourusername/dsa3101-2310-library) onto your computer (only need to do this once)
 3. Navigate to repo and type in terminal `git remote add upstream git@github.com:dsa3101-2310-01-library/dsa3101-2310-01-library.git` (only need to do this once)
