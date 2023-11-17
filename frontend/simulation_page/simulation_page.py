@@ -50,8 +50,7 @@ hour_map = {
     20: '20:00',
     21: '21:00',
     22: '22:00',
-    24: '23:00',
-    25: '00:00',
+    23: '23:00'
 }
 
 # Bar Graphs for 'Overall Change in Occupancy'
