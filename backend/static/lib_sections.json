@@ -2,7 +2,7 @@
     "submission_name": "test",
     "levels": [
     {
-        "level": "clb_3",
+        "level": "level 3",
         "sections": [
             {"seat_type": "movable_seat", "count": 50},
             {"seat_type": "4_man_seat", "count": 0},
@@ -15,7 +15,7 @@
             {"seat_type": "diagonal_seat", "count": 0}
     ]},
     {
-        "level": "clb_4",
+        "level": "Level 4",
         "sections": [
             {"seat_type": "movable_seat", "count": 0},
             {"seat_type": "4_man_seat", "count": 0},
@@ -28,7 +28,7 @@
             {"seat_type": "diagonal_seat", "count": 0}
     ]},
     {
-        "level": "clb_5",
+        "level": "Level 5",
         "sections": [
             {"seat_type": "movable_seat", "count": 0},
             {"seat_type": "4_man_seat", "count": 40},
@@ -41,7 +41,7 @@
             {"seat_type": "diagonal_seat", "count": 0}
     ]},
     {
-        "level": "clb_6",
+        "level": "Level 6 Central Library",
         "sections": [
             {"seat_type": "movable_seat", "count": 0},
             {"seat_type": "4_man_seat", "count": 0},
@@ -54,7 +54,7 @@
             {"seat_type": "diagonal_seat", "count": 100}
     ]},
     {
-        "level": "wbs_6",
+        "level": "Level 6 Chinese Library",
         "sections": [
             {"seat_type": "movable_seat", "count": 0},
             {"seat_type": "4_man_seat", "count": 0},

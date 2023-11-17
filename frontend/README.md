@@ -1,7 +1,13 @@
 # DSA3101_library_frontend
 
-This folder contains the frontend code for the library seat occupancy simulation system.
+This folder contains the frontend code for the library seat occupancy simulation system. The frontend interface is developed using Python Dash, alongside HTML and CSS concepts to enhance the visual appeal of the interface. The interactive graphs are generated using Plotly to enhance the user experience. 
 
+## Folder Structure
+The `assets` folder contains the images and icons that were used in the various pages. 
+
+The `data` folder stores the data files generated from the input page as well as data files required for the simulation page. 
+
+The other folder comprises Python scripts corresponding to each page of the web interface under development. 
 ## Getting Started
 
 Assuming you have python and pip installed, or virtual environment equivalent, run the following commands to get started:
@@ -41,12 +47,6 @@ def display_page(pathname):
 This code demonstrates that if the url location is changed to /input, then the output-div’s children will be changed to the layout of input_page. This is how we execute the multi-page effect in the frontend application. Similarly, to update the current page shown in the application, create a new callback function with Output as the pathname of url. Any updates to the pathname of “url” will also trigger the display_page function above, and make the application display the respective layout.
 
 **Therefore, when a new page is created, app.py needs to import the page, its callback functions have to be written inside the app.py script, and the page needs to be added to the display_page callback function shown above.**
-
-## Introduction
-This folder comprises Python scripts corresponding to each page of the web interface under development. The assets folder contains the images and icons that were used in the various pages. The data folder stores the data files generated from the input page as well as data files required for the simulation page.
-
-## Requirements
-The web interface is developed using Python Dash, alongside HTML and CSS concepts to enhance the visual appeal of the interface. Addtionally, interactive graphs will be generated using Plotly to enhance the user experience. 
 
 ## To run Docker Container 
 1. Navigate to this folder via `cd` command in terminal

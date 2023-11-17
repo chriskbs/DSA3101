@@ -10,6 +10,6 @@
         {"level_id": "Level 3", "connected_to": "Level 4"},
         {"level_id": "Level 4", "connected_to": "Level 5"},
         {"level_id": "Level 5", "connected_to": "Level 6 Central Library"},
-        {"level_id": "Level 6 Central Library", "connected_to": "Level 6 Chinese Library"}
+        {"level_id": "Level 5", "connected_to": "Level 6 Chinese Library"}
     ]
 }
