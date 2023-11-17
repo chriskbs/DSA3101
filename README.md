@@ -23,9 +23,14 @@ docker-compose up --build -d
 4. Open a chrome or edge browser and go to `http://localhost:9002`
 
 ## Snapshot of the application
-
-
-
+### Home page
+![Home page](frontend/assets/home.png)
+### Input seat arrangement page
+![Input seat arrangement page](frontend/assets/input.png)
+### Simulation page
+![Simulation page](frontend/assets/sim.png)
+### View past Simulation page
+![View past Simulation page](frontend/assets/past_sim.png)
 
 ## How to contribute to this repo
 1. Fork the team repo (only need to do this once)

@@ -67,14 +67,21 @@ def simulation_scores(simulation_name):
     with open(os.path.join(data_directory, simulation_name + '.json')) as f:
         simulation_scores = json.load(f)
     scores_style = {'display': 'inline-block', 'width': '33.3%', 'text-align': 'left'}
+    formatted_score = "{:.2f}".format(simulation_scores["score"])
+    formatted_privacy = "{:.2f}".format(simulation_scores["privacy"])
+    formatted_crowd_level = "{:.2f}".format(simulation_scores["crowd level"])
+    formatted_comfort = "{:.2f}".format(simulation_scores["comfort"])
+    formatted_scenery = "{:.2f}".format(simulation_scores["scenery"])
+    formatted_lighting = "{:.2f}".format(simulation_scores["lighting"])
+    formatted_ease_of_access = "{:.2f}".format(simulation_scores["ease of access"])
     return html.Div([
-        html.H5(f'Score:{simulation_scores["score"]}', style=scores_style),
-        html.H5(f'Privacy:{simulation_scores["privacy"]}', style=scores_style),
-        html.H5(f'Crowd Level:{simulation_scores["crowd level"]}', style=scores_style),
-        html.H5(f'Comfort:{simulation_scores["comfort"]}', style=scores_style),
-        html.H5(f'Scenery:{simulation_scores["scenery"]}', style=scores_style),
-        html.H5(f'Lighting:{simulation_scores["lighting"]}', style=scores_style),
-        html.H5(f'Ease of Access:{simulation_scores["ease of access"]}', style=scores_style),
+        html.H5(f'Score: {formatted_score}', style=scores_style),
+        html.H5(f'Privacy: {formatted_privacy}', style=scores_style),
+        html.H5(f'Crowd Level: {formatted_crowd_level}', style=scores_style),
+        html.H5(f'Comfort: {formatted_comfort}', style=scores_style),
+        html.H5(f'Scenery: {formatted_scenery}', style=scores_style),
+        html.H5(f'Lighting: {formatted_lighting}', style=scores_style),
+        html.H5(f'Ease of Access: {formatted_ease_of_access}', style=scores_style),
     ],
     style={'display': 'inline-block', 'width': '100%', 'padding': '10px'})
     
@@ -95,12 +102,12 @@ def create_row(simulation_name, actual):
     simulation = html.Div(
         children=[
             html.Div([
-                html.H3(dcc.Link(f"{simulation_name}@normal period", href = '/simulation_page'), style={'padding': '10px', "text-decoration": "underline"}), # changed 6/11 linking to simulation page 
+                html.H3(dcc.Link(f"{simulation_name}", href = f'/simulation_page/{simulation_name}'), style={'padding': '10px', "text-decoration": "underline"}), # changed 6/11 linking to simulation page 
                 simulation_scores(simulation_name),
             ], style={'display': 'inline-block', 'width': '85%', 'vertical-align': 'middle'}),
             html.Div([
                 html.Button(
-                    dcc.Link(children=[html.Img(src='assets/view.png', style={'width': '100px', 'height': '100px'})], href = '/simulation_page'), # changed 6/11 linking to simulation page 
+                    dcc.Link(children=[html.Img(src='assets/view.png', style={'width': '100px', 'height': '100px'})], href = f'/simulation_page/{simulation_name}'), # changed 6/11 linking to simulation page 
                     id=f'view-button-{simulation_name}',
                     style={'width': '90%', 'height': '100%'}
                 )

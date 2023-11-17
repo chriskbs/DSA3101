@@ -10,6 +10,7 @@ from dash.dependencies import Input, Output, State
 from datetime import datetime 
 import requests
 import pandas as pd
+from urllib.parse import unquote
 
 import input_page.input_page as ip
 import home_page.home_page as hp
@@ -20,7 +21,7 @@ import loading_page.loading as load
 import comparison.comparison as compare
 
 inputs_directory = r'data/seat arrangement/'
-simulation_csv_fname = os.path.join('data/simulation csv','trial_data_1lvl.csv')
+simulation_csv_fname = os.path.join('data/simulation csv','234@normal.csv')
 title = ip.title
 
 app = dash.Dash(__name__, 
@@ -332,6 +333,21 @@ def update_past_simulation_dropdown(pathname):
     new_options = [{'label': name, 'value': name} for name in psp.simulation_names]
     new_children = [html.Hr()]+[psp.create_row(simulation_name, actual_simulation_names) for simulation_name in psp.static_simulation_names]
     return new_options, new_options, new_children
+
+# update the bar plot when a new simulation is created
+@app.callback(
+    Output('slider-output-container', 'children', allow_duplicate=True),
+    [Input('url', 'pathname')]
+)
+def update_output(pathname):
+    simulation_name = unquote(pathname.split('/')[-1])
+    global simulation_csv_fname
+    if simulation_name in psp.simulation_names:
+        simulation_csv_fname = os.path.join('data/simulation csv',f'{simulation_name}.csv')
+    data = pd.read_csv(simulation_csv_fname)
+    data['timestamp'] = pd.to_datetime(data['timestamp'])
+    sp.level_layouts = {level: sp.create_level_layout(level, 9, data) for level in sp.levels}
+    return [sp.level_layouts[level] for level in sp.levels]
 # Callbacks for simulation_page.py -----------------------------------------------------------------------------------------------------------------------------
 # Create callback functions for the "Full Graph" buttons for each level
 for level in sp.levels:
@@ -368,7 +384,7 @@ def update_content(tab):
         return sp.tab1_content
     else:
         return sp.tab_oo_layout
-    
+
 # Callback for comparison page --------------------------------------------------------------------------------------------------------------------------------------
 @app.callback(
     Output('model-differences', 'figure'),
@@ -398,7 +414,7 @@ def display_page(pathname):
         return psp.psp_layout
     if pathname == '/run_simulation':
         return rs.rs_layout
-    if pathname == '/simulation_page':
+    if pathname.startswith('/simulation_page'):
         return sp.sp_layout
     if pathname == '/compare':
         return compare.app.layout
@@ -409,4 +425,4 @@ def display_page(pathname):
 
     
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', debug=True)
+    app.run_server(host='0.0.0.0', debug=False)
