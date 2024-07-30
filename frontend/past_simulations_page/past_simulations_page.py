@@ -12,14 +12,19 @@ data_directory = r"data/simulation json/"
 
 # app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
+# we need this to keep track of the names that were deleted
 static_simulation_names = []
+# add names inside the data directory that are not in the current list
+def add_json_filenames(current_list, directory):
+    for fname in os.listdir(directory):
+        if os.path.isfile(os.path.join(directory, fname)):
+            name, extension = os.path.splitext(fname)
+            if extension == '.json':
+                if name not in current_list:
+                    current_list.append(name)
+    return current_list
 
-for fname in os.listdir(data_directory):
-    if os.path.isfile(os.path.join(data_directory, fname)):
-        name, extension = os.path.splitext(fname)
-        if extension == '.json':
-            static_simulation_names.append(name)
-
+static_simulation_names = add_json_filenames(static_simulation_names, data_directory)
 simulation_names = static_simulation_names.copy()
       
 def create_dropdown(position="left"):
@@ -62,39 +67,53 @@ def simulation_scores(simulation_name):
     with open(os.path.join(data_directory, simulation_name + '.json')) as f:
         simulation_scores = json.load(f)
     scores_style = {'display': 'inline-block', 'width': '33.3%', 'text-align': 'left'}
+    formatted_score = "{:.2f}".format(simulation_scores["score"])
+    formatted_privacy = "{:.2f}".format(simulation_scores["privacy"])
+    formatted_crowd_level = "{:.2f}".format(simulation_scores["crowd level"])
+    formatted_comfort = "{:.2f}".format(simulation_scores["comfort"])
+    formatted_scenery = "{:.2f}".format(simulation_scores["scenery"])
+    formatted_lighting = "{:.2f}".format(simulation_scores["lighting"])
+    formatted_ease_of_access = "{:.2f}".format(simulation_scores["ease of access"])
     return html.Div([
-        html.H5(f'Score:{simulation_scores["score"]}', style=scores_style),
-        html.H5(f'Privacy:{simulation_scores["privacy"]}', style=scores_style),
-        html.H5(f'Crowd Level:{simulation_scores["crowd level"]}', style=scores_style),
-        html.H5(f'Comfort:{simulation_scores["comfort"]}', style=scores_style),
-        html.H5(f'Scenery:{simulation_scores["scenery"]}', style=scores_style),
-        html.H5(f'Lighting:{simulation_scores["lighting"]}', style=scores_style),
-        html.H5(f'Ease of Access:{simulation_scores["ease of access"]}', style=scores_style),
+        html.H5(f'Score: {formatted_score}', style=scores_style),
+        html.H5(f'Privacy: {formatted_privacy}', style=scores_style),
+        html.H5(f'Crowd Level: {formatted_crowd_level}', style=scores_style),
+        html.H5(f'Comfort: {formatted_comfort}', style=scores_style),
+        html.H5(f'Scenery: {formatted_scenery}', style=scores_style),
+        html.H5(f'Lighting: {formatted_lighting}', style=scores_style),
+        html.H5(f'Ease of Access: {formatted_ease_of_access}', style=scores_style),
     ],
     style={'display': 'inline-block', 'width': '100%', 'padding': '10px'})
     
     
-def create_row(simulation_name):
+def create_row(simulation_name, actual):
+    hidden = simulation_name not in actual
+    delete_button = html.Button(
+        children=[html.Img(src='assets/delete.svg', alt='Button Image', style={'width': '50px', 'height': '100px'})],
+        id=f'delete-button-{simulation_name}',
+        style={'width': '100%', 'height': '100%'}
+    )
+    if hidden:
+        return html.Div([delete_button],
+                    style={'vertical-align': 'middle'},
+                    id=f'row-{simulation_name}',
+                    hidden=hidden
+                )
     simulation = html.Div(
         children=[
             html.Div([
-                html.H3(dcc.Link(f"{simulation_name}@normal period", href = '/simulation_page'), style={'padding': '10px', "text-decoration": "underline"}), # changed 6/11 linking to simulation page 
+                html.H3(dcc.Link(f"{simulation_name}", href = f'/simulation_page/{simulation_name}'), style={'padding': '10px', "text-decoration": "underline"}), # changed 6/11 linking to simulation page 
                 simulation_scores(simulation_name),
             ], style={'display': 'inline-block', 'width': '85%', 'vertical-align': 'middle'}),
             html.Div([
                 html.Button(
-                    dcc.Link(children=[html.Img(src='assets/view.png', style={'width': '100px', 'height': '100px'})], href = '/simulation_page'), # changed 6/11 linking to simulation page 
+                    dcc.Link(children=[html.Img(src='assets/view.png', style={'width': '100px', 'height': '100px'})], href = f'/simulation_page/{simulation_name}'), # changed 6/11 linking to simulation page 
                     id=f'view-button-{simulation_name}',
                     style={'width': '90%', 'height': '100%'}
                 )
             ], style={'display': 'inline-block', 'width': '15%', 'vertical-align': 'middle', 'height': '100%'})
         ],
         style={'display': 'inline-block', 'width': '85%', 'margin': '0 auto', 'border': '1px solid black', 'vertical-align': 'middle'}
-    )
-    delete_button = html.Button(
-        children=[html.Img(src='assets/delete.svg', alt='Button Image', style={'width': '50px', 'height': '100px'})],
-        id=f'delete-button-{simulation_name}',
-        style={'width': '100%', 'height': '100%'}
     )
     new_row = html.Div(
         children=[
@@ -114,7 +133,7 @@ def create_row(simulation_name):
             html.Br()
         ],
         style={'vertical-align': 'middle'},
-        id=f'row-{simulation_name}'
+        id=f'row-{simulation_name}',
     )
     return new_row_with_Br
 
@@ -133,7 +152,8 @@ delete_modal = dbc.Modal(
 )
 
 past_simulations = html.Div(
-    children=[html.Hr()]+[create_row(simulation_name) for simulation_name in simulation_names],
+    id='past-simulations',
+    children=[html.Hr()]+[create_row(simulation_name, simulation_name) for simulation_name in simulation_names],
     style={'overflow': 'scroll', 'height': '90%', 'width': '100%'}
 )
 

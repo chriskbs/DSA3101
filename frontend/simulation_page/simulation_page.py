@@ -1,29 +1,21 @@
-import dash
-import plotly.express as px
+import os
+import sys
+import dash 
+import random
+import numpy as np
 import pandas as pd
-import dash_bootstrap_components as dbc
+import plotly.express as px
+import plotly.graph_objs as go
+import dash_bootstrap_components as dbc 
+
 from dash import html, dcc, Input, Output, State
 from datetime import datetime, timedelta
-import random
-import plotly.graph_objs as go
-import os
-import numpy as np
-import requests
-import sys
-app_dir_path = os.path.dirname(__file__)
-sys.path.append(app_dir_path)
 
-
-data = pd.read_csv(os.path.join(os.path.dirname(__file__), 'dummy_data','trial_data_1lvl.csv'))
-# data = app.state['simulation_data']
+current_directory = os.path.dirname(os.path.abspath(__file__))
+csv_path = os.path.join(current_directory, '..', 'data', 'simulation csv', '234@normal.csv')
+data = pd.read_csv(csv_path)
+data['timestamp'] = pd.to_datetime(data['timestamp'])
 levels = list(data['level'].unique()) # identifying the levels that users have chosen to simulate
-timestamps_column = data['timestamp']
-timestamps_column = pd.to_datetime(timestamps_column)
-timestamps_column = timestamps_column.dt.time
-data['timestamp'] = timestamps_column
-current = datetime.strptime('10:20:00', '%H:%M:%S') # update 10:20:00 accordingly to slider value
-current_time = current.time()
-# print(data['timestamp'][1] == current_time)
 
 # If the user only inputs data for one level, the graph would occupy the whole screen else just half the screen
 if len(levels) == 1:
@@ -33,6 +25,7 @@ else:
     x = "48%"
     y = "48%"
 
+# For the slider
 hour_map = {
     0: '00:00',
     1: '01:00',
@@ -57,27 +50,57 @@ hour_map = {
     20: '20:00',
     21: '21:00',
     22: '22:00',
-    24: '23:00',
-    25: '00:00',
+    23: '23:00'
 }
 
-def create_level_layout(level, data):
-    indexes_level = [index for index, value in enumerate(data['level']) if value == level]
+# Bar Graphs for 'Overall Change in Occupancy'
+# def create_level_layout(level, data):
+#     indexes_level = [index for index, value in enumerate(data['level']) if value == level]
+#     df_level = data.iloc[indexes_level].sort_values(by='section')
+#     fig_level = px.bar(df_level, x='section', y='utilization_rate', title=f'Level {level}', color='utilization_rate',
+#                        color_discrete_sequence='rgb(77, 232, 232)',
+#                        text=df_level['utilization_rate'],
+#                        hover_data={'utilization_rate': True})
+#     fig_level.update_traces(marker=dict(color='rgb(77, 232, 232)')) # To ensure that the graph color would be red and green
+#     fig_level.update_layout(hovermode='closest')
+
+#     # Create the layout for the given level
+#     tab_bp_layout_level = html.Div([
+#         dcc.Graph(id=f'Graph_{level}', figure=fig_level),
+#         dbc.Button(f"Full Graph (Level {level})", id=f"button_lvl{level}", n_clicks=0, style={'float': 'right', 'background-color': '#003D7C'}),
+#         html.Div(id=f"popup-content{level}", children=[
+#             dbc.Modal([
+#                 dbc.ModalHeader(f"Level {level}", style={'background-color': '#003D7C', 'font-size': '24px', 'font-weight': 'bold'}),
+#                 dbc.ModalBody([
+#                     dcc.Graph(id=f'Graph_{level}', figure=fig_level, style={'width': '100%', 'height': '100%'}),
+#                 ], style={'background-color': 'white'}),
+#             ], id=f"popup{level}", fullscreen=True, centered=True)
+#         ])
+#     ], style={'width': x, 'height': y, 'display': 'inline-block'})
+#     return tab_bp_layout_level
+
+def create_level_layout(level, hour, data):
+    indexes_level = [index for index, value in enumerate(data['level']) if value == level and data['timestamp'][index].hour == hour]
     df_level = data.iloc[indexes_level].sort_values(by='section')
-    fig_level = px.bar(df_level, x='section', y='utilization_rate', title=f'Level {level}', color='utilization_rate',
+    df_level = df_level.dropna(subset=['utilization_rate'])
+    grouped_data = df_level.groupby(['section'])['utilization_rate'].mean().reset_index()
+    fig_level = px.bar(grouped_data, x='section', y='utilization_rate', title=f'Level {level} - Hour {hour}', color='utilization_rate',
                        color_discrete_sequence='rgb(77, 232, 232)',
-                       text=df_level['utilization_rate'],
+                       text=grouped_data['utilization_rate'],
                        hover_data={'utilization_rate': True})
-    fig_level.update_traces(marker=dict(color='rgb(77, 232, 232)')) # To ensure that the graph color would be red and green
+    fig_level.update_traces(marker=dict(color='rgb(77, 232, 232)'))  # To ensure that the graph color would be red and green
+    fig_level.update_layout(yaxis_range=[0, 1])
+    fig_level.update_traces(texttemplate='%{text:.2f}', textposition='outside')
     fig_level.update_layout(hovermode='closest')
 
-    # Create the layout for the given level
+    # Create the layout for the given level and hour
     tab_bp_layout_level = html.Div([
         dcc.Graph(id=f'Graph_{level}', figure=fig_level),
-        dbc.Button(f"Full Graph (Level {level})", id=f"button_lvl{level}", n_clicks=0, style={'float': 'right', 'background-color': '#003D7C'}),
+        dbc.Button(f"Full Graph (Level {level} - Hour {hour})", id=f"button_lvl{level}", n_clicks=0,
+                   style={'float': 'right', 'background-color': '#003D7C'}),
         html.Div(id=f"popup-content{level}", children=[
             dbc.Modal([
-                dbc.ModalHeader(f"Level {level}", style={'background-color': '#003D7C', 'font-size': '24px', 'font-weight': 'bold'}),
+                dbc.ModalHeader(f"Level {level} - Hour {hour}", style={'background-color': '#003D7C', 'font-size': '24px', 'font-weight': 'bold'}),
                 dbc.ModalBody([
                     dcc.Graph(id=f'Graph_{level}', figure=fig_level, style={'width': '100%', 'height': '100%'}),
                 ], style={'background-color': 'white'}),
@@ -87,12 +110,12 @@ def create_level_layout(level, data):
     return tab_bp_layout_level
 
 
-level_layouts = {level: create_level_layout(level, data) for level in levels}
+level_layouts = {level: create_level_layout(level, 9, data) for level in levels}
 tab1_content = html.Div([
     dcc.Slider(
         id = 'my-slider',
         marks = hour_map,
-        value = 0, 
+        value = 9, 
         step = None
     ),
     html.Div(
@@ -113,36 +136,6 @@ def generate_bell_curve(center, std_dev, length, floor_name):
 
 peak_times = [datetime(2023, 1, 1, 11, 0), datetime(2023, 1, 1, 10, 0), datetime(2023, 1, 1, 14, 0), datetime(2023, 1, 1, 16, 0)]
 std_deviation = 2  
-
-
-button_style = {'backgroundColor': 'black', 'color': 'white', 'borderRadius': '15px', 'margin': '5px'}
-tab_style = {'padding': '10px', 'background-color': '#003D7C', 'color':'white', 'fontWeight':'bold', 'fontSize':'20px'}
-# # The overall skeleton
-sp_layout = html.Div([
-    html.Button(dcc.Link("Home", href = '/', style = {'text-decoration':'none'}), 
-                id="button_home", n_clicks=0, style={'background-color': 'light grey', 'border-radius': '5px'}),
-    html.Button(dcc.Link(children=[html.Img(src='assets/close.png', style={'width': '17px', 'height': '17px'})], href = '/run_simulation', style = {'text-decoration':'none'}), 
-                id="button_close", n_clicks=0, style={'border-radius': '5px', 'float': 'right'}),
-    html.Div([
-        dcc.Tabs(id='tabs', value='tab-1', children=[
-            dcc.Tab(label='Overall Change in Occupancy', value='tab-1', style= tab_style),
-            dcc.Tab(label='Occupancy overtime', value='tab-2', style= tab_style)
-        ]),
-        html.Div(id='tab-content')
-    ])], style={'padding': '10px'})
-
-# # Create callback functions for the "Full Graph" buttons for each level
-# for level in levels:
-#     @app.callback(
-#         Output(f'popup-content{level}', 'style'),
-#         Output(f'popup{level}', 'is_open'),
-#         Input(f'button_lvl{level}', 'n_clicks'),
-#         State(f'popup{level}', 'is_open')
-#     )
-#     def toggle_popup(n1, is_open, level=level):
-#         if n1:
-#             return {"display": "block"}, not is_open
-#         return {"display": "none"}, is_open
 
 # Time series plot for 'Occupancy Overtime'
 traces = []
@@ -188,48 +181,19 @@ tab_oo_layout = html.Div([
     dcc.Graph(figure={'data': traces, 'layout': layout}, id='tab-oo-layout'),
 ])
 
-# Callback for switching between tabs and displaying the full graphs
-# @app.callback(
-#     Output('tab-content', 'children'),
-#     Input('tabs', 'value')
-# )
-# def update_content(tab):
-#     if tab == 'tab-1':
-#         return [level_layouts[level] for level in levels]
-#     else:
-#         return tab_oo_layout
+# The overall skeleton
+button_style = {'backgroundColor': 'black', 'color': 'white', 'borderRadius': '15px', 'margin': '5px'}
+tab_style = {'padding': '10px', 'background-color': '#003D7C', 'color':'white', 'fontWeight':'bold', 'fontSize':'20px'}
 
+sp_layout = html.Div([
+    html.A(html.Button("Home", className="home-btn", id="home-button"), href="/"),
+    html.Button(dcc.Link(children=[html.Img(src=r'assets/close.png', style={'width': '17px', 'height': '17px'})], href = '/run_simulation', style = {'text-decoration':'none'}), 
+                id="button_close", n_clicks=0, style={'border-radius': '5px', 'float': 'right'}),
+    html.Div([
+        dcc.Tabs(id='tabs', value='tab-1', children=[
+            dcc.Tab(label='Overall Change in Occupancy', value='tab-1', style= tab_style),
+            dcc.Tab(label='Occupancy overtime', value='tab-2', style= tab_style)
+        ]),
+        html.Div(tab1_content, id='tab-content')
+    ])], style={'padding': '10px'})
 
-# Callback for connecting API and switching between graphs
-# @app.callback(
-#     Output('tab-content', 'children'),
-#     Input('tabs', 'value'),
-#     Input('run-simulation-button', 'n_clicks'),
-#     prevent_initial_call=True
-# )
-# def update_content(tab, n_clicks):
-#     if n_clicks is None:
-#         raise PreventUpdate
-
-#     if tab == 'tab-1':
-#         return [level_layouts[level] for level in levels]
-#     else:
-#         results_url = 'http://127.0.0.1:5000/results'
-
-#         # Make a GET request to the API
-#         response = requests.get(results_url)
-
-#         if response.status_code == 200:
-#             # Assume the API returns a JSON object with the necessary information
-#             result = response.json()
-
-#             return [
-#                 tab_oo_layout,
-#                 html.Div(f"Result CSV file: {result['result_csv']}", style={'color': 'navy', 'font-size': '18px'}),
-#                 html.Div(f"Result JSON file: {result['result_json']}", style={'color': 'navy', 'font-size': '18px'})
-#             ]
-#         else:
-#             return [html.Div(f"Error: {response.status_code}\n{response.json()}", style={'color': 'red', 'font-size': '18px'})]
-
-# if __name__ == '__main__':
-#     app.run_server(debug=True)
